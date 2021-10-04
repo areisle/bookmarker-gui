@@ -12,7 +12,7 @@ const prompts = [
         type: 'input',
         name: 'outputPath',
         message: 'enter path to where component should be generated',
-        default: 'components'
+        default: 'src/components'
     },
 ];
 
