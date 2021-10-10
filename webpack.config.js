@@ -1,6 +1,8 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyPlugin = require("copy-webpack-plugin");
+const Dotenv = require('dotenv-webpack');
+const webpack = require('webpack');
 
 const htmlTemplate = `
 <!DOCTYPE html>
@@ -30,6 +32,7 @@ module.exports = {
             directory: path.join(__dirname, 'dist'),
         },
     },
+    devtool: "source-map",
     resolve: {
         extensions: ['.tsx', '.ts', '.js'],
     },
@@ -64,5 +67,12 @@ module.exports = {
                 { from: "public" },
             ],
         }),
+        new Dotenv(),
+        new webpack.BannerPlugin({
+            banner: 'window = typeof window !== "undefined" && window !== null ? window : self;',
+            entryOnly: true,
+            raw: true,
+            include: ['background']
+        })
     ],
 }
