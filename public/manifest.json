@@ -10,9 +10,10 @@
         "150": "icons/icon.png"
     },
     "permissions": [
-        "activeTab",
         "scripting",
-        "storage"
+        "storage",
+        "tabs",
+        "identity"
     ],
     "action": {
         "default_title": "Bookmark Tagger",
