@@ -10,8 +10,6 @@
         "150": "icons/icon.png"
     },
     "permissions": [
-        "scripting",
-        "storage",
         "tabs",
         "identity"
     ],
