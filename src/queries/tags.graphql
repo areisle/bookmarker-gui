@@ -1,0 +1,13 @@
+query tags($categoryId: Int!, $tagsWhere: JSON) {
+    tags(categoryId: $categoryId, where: $tagsWhere, take: 20) {
+        name
+    }
+}
+
+mutation addTag($bookmarkId: Int!, $name: String!) {
+    addTag(bookmarkId: $bookmarkId, name: $name)
+}
+
+mutation removeTag($bookmarkId: Int!, $name: String!) {
+    removeTag(bookmarkId: $bookmarkId, name: $name)
+}

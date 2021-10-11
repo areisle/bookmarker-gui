@@ -1,3 +1,18 @@
-mutation login($email: String!, $password: String!) {
-    login(email: $email, password: $password)
+query users($categoryId: Int!) {
+    users(categoryId: $categoryId) {
+        id
+        user {
+            email
+        }
+        active
+        admin
+    }
+}
+
+mutation addUsers($categoryId: Int!, $emails: [String!]!) {
+    addUsers(categoryId: $categoryId, emails: $emails)
+}
+
+mutation removeUser($categoryId: Int!, $id: Int!) {
+    removeUser(categoryId: $categoryId, id: $id)
 }

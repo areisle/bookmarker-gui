@@ -1,0 +1,17 @@
+query categories {
+    categories {
+        id
+        name
+    }
+}
+
+mutation addCategory($name: String!) {
+    addCategory(name: $name) {
+        id
+        name
+    }
+}
+
+mutation leaveCategory($id: Int!) {
+    leaveCategory(id: $id)
+}
