@@ -53,6 +53,11 @@ const theme = createTheme({
                 margin: 'none',
                 size: 'small'
             }
+        },
+        MuiAutocomplete: {
+            defaultProps: {
+                size: 'small'
+            }
         }
     }
 });
