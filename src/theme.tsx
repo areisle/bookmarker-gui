@@ -46,6 +46,12 @@ const theme = createTheme({
             defaultProps: {
                 variant: 'outlined'
             }
+        },
+        MuiTextField: {
+            defaultProps: {
+                margin: 'dense',
+                size: 'small'
+            }
         }
     }
 });

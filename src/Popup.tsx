@@ -1,17 +1,18 @@
+import { Button } from "@mui/material"
 import React, { useEffect } from "react"
 import ReactDom from "react-dom"
+import { LoginPage } from "./pages/LoginPage"
 
 function PopupPage() {
-    useEffect(() => {
-    }, []);
-
     const handleClick = () => {
-        chrome.identity.getAuthToken({ interactive: true }, async function (token) {
-            console.log({ token });
-        });
+        chrome?.runtime.openOptionsPage()
     }
 
-    return (<span><button onClick={handleClick}>run auth check</button></span>)
+    return (
+        <span>
+            <Button onClick={handleClick}>Login</Button>
+        </span>
+    )
 }
 
 ReactDom.render(<PopupPage />, document.getElementById('root'))
