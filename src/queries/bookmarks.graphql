@@ -28,5 +28,8 @@ query bookmarks(
 query bookmarksForUrl($url: String!) {
     bookmarksForUrl(url: $url) {
         id
+        category {
+            id
+        }
     }
 }

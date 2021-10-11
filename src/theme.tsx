@@ -58,6 +58,11 @@ const theme = createTheme({
             defaultProps: {
                 size: 'small'
             }
+        },
+        MuiMenuItem: {
+            defaultProps: {
+                dense: true,
+            }
         }
     }
 });

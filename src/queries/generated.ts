@@ -18,6 +18,7 @@ export type Scalars = {
 
 export type Bookmark = {
   __typename?: 'Bookmark';
+  category: Category;
   categoryId: Scalars['Int'];
   createdAt: Scalars['Date'];
   description?: Maybe<Scalars['String']>;
@@ -221,7 +222,7 @@ export type BookmarksForUrlVariables = Exact<{
 }>;
 
 
-export type BookmarksForUrl = { __typename?: 'Query', bookmarksForUrl: Array<{ __typename?: 'Bookmark', id: number }> };
+export type BookmarksForUrl = { __typename?: 'Query', bookmarksForUrl: Array<{ __typename?: 'Bookmark', id: number, category: { __typename?: 'Category', id: number, name: string } }> };
 
 export type CategoriesVariables = Exact<{ [key: string]: never; }>;
 
@@ -330,6 +331,10 @@ export const BookmarksForUrlDocument = `
     query bookmarksForUrl($url: String!) {
   bookmarksForUrl(url: $url) {
     id
+    category {
+      id
+      name
+    }
   }
 }
     `;

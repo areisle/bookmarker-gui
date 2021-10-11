@@ -1,5 +1,6 @@
 import React from "react"
 import ReactDom from "react-dom"
+import { PopupPage as Popup } from "./pages/PopupPage"
 import { AuthProvider, QueryProvider } from "./queries"
 import { CustomThemeProvider } from "./theme"
 
@@ -9,7 +10,7 @@ function PopupPage() {
             <CustomThemeProvider>
                 <QueryProvider>
                     <AuthProvider isPopup={true}>
-                        popup page
+                        <Popup />
                     </AuthProvider>
                 </QueryProvider>
             </CustomThemeProvider>
