@@ -1,12 +1,15 @@
 import { getToken } from "./auth";
 
-export const fetchData = <TData, TVariables>(query: string, variables?: TVariables): (() => Promise<TData>) => {
+export const fetchData = <TData, TVariables>(
+    query: string,
+    variables?: TVariables
+): (() => Promise<TData>) => {
     return async () => {
         const token = await getToken();
-        const res = await fetch(process.env.STORYBOOK_API_URL ?? "", {
-            method: 'POST',
+        const res = await fetch(process.env.API_URL!, {
+            method: "POST",
             headers: {
-                'Content-Type': 'application/json',
+                "Content-Type": "application/json",
                 Authorization: token,
             },
             body: JSON.stringify({
@@ -18,7 +21,7 @@ export const fetchData = <TData, TVariables>(query: string, variables?: TVariabl
         const json = await res.json();
 
         if (json.errors) {
-            const { message } = json.errors[0] || 'Error..';
+            const { message } = json.errors[0] || "Error..";
             throw new Error(message);
         }
 
