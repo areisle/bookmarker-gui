@@ -10,17 +10,10 @@
         "150": "icons/icon.png"
     },
     "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjJaqNrLLk2LcuQtjZLuniH8Nbiby4m86K5MRWKz8nnlIsMsKYjJxzfFOSN0HfHK8Vz+RW2d0YiICb151ZhNJUeAninyOO2GTLMqY/dbEWqYRTYMv5NhPp4sRmqCexkMPpWjNatw/HTbgN7hMt7b4jIISFw6qYcxqh7uf9ohgZaKlJpaW2SnrkAy5fkIbbkEndaIOnH5NXt9+QFT0UgZxsJm2B9u+1QcNFSRSFN3xs+44aIcKsuw1/wjVloo6+U8brRnSxDS4xU6Xpsj7VygtipRWRtlGQo+SdkAFlnwt2Z5s5KpjanWZzymJ7W4HUNGEXUb7B8vsRS/qprYcG/yXVwIDAQAB",
-    "oauth2": {
-        "client_id": "171921745299-25ptdjg9kt6h6d1mj2angvjlspsjcs1o.apps.googleusercontent.com",
-        "scopes": [
-            "openid",
-            "email",
-            "profile"
-        ]
-    },
     "permissions": [
         "tabs",
-        "identity"
+        "identity",
+        "storage"
     ],
     "action": {
         "default_title": "Bookmark Tagger",

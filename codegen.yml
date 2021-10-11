@@ -1,0 +1,16 @@
+overwrite: true
+schema: "http://localhost:4000"
+documents: "src/**/*.graphql"
+generates:
+  src/queries/generated.ts:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-react-query"
+    config:
+      # relative to generated file
+      fetcher: './fetcher#useFetchData'
+      isReactHook: true
+      omitOperationSuffix: true
+      exposeQueryKeys: true
+      errorType: Error

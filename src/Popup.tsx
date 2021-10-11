@@ -1,16 +1,18 @@
-import { Button } from "@mui/material"
-import React, { useEffect } from "react"
+import React from "react"
 import ReactDom from "react-dom"
-import { LoginPage } from "./pages/LoginPage"
+import { AuthProvider, QueryProvider } from "./queries"
+import { CustomThemeProvider } from "./theme"
 
 function PopupPage() {
-    const handleClick = () => {
-        chrome?.runtime.openOptionsPage()
-    }
-
     return (
         <span>
-            <Button onClick={handleClick}>Login</Button>
+            <CustomThemeProvider>
+                <QueryProvider>
+                    <AuthProvider isPopup={true}>
+                        popup page
+                    </AuthProvider>
+                </QueryProvider>
+            </CustomThemeProvider>
         </span>
     )
 }

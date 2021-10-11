@@ -1,4 +1,5 @@
 import { CustomThemeProvider } from '../src/theme';
+import { QueryProvider } from '../src/queries';
 
 export const parameters = {
     actions: { argTypesRegex: "^on[A-Z].*" },
@@ -10,4 +11,7 @@ export const parameters = {
     },
 };
 
-export const decorators = [(Story) => <CustomThemeProvider><Story /></CustomThemeProvider>];
+export const decorators = [
+    (Story) => <CustomThemeProvider><Story /></CustomThemeProvider>,
+    (Story) => <QueryProvider><Story /></QueryProvider>,
+];

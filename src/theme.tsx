@@ -1,3 +1,4 @@
+import React from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { ReactNode } from 'react';
 
@@ -49,7 +50,7 @@ const theme = createTheme({
         },
         MuiTextField: {
             defaultProps: {
-                margin: 'dense',
+                margin: 'none',
                 size: 'small'
             }
         }
