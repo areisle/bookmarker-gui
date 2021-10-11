@@ -1,8 +1,8 @@
-import { useAuth } from "./auth";
+import { getToken } from "./auth";
 
-export const useFetchData = <TData, TVariables>(query: string): (() => Promise<TData>) => {
-    const { token } = useAuth();
-    return async (variables?: TVariables) => {
+export const fetchData = <TData, TVariables>(query: string, variables?: TVariables): (() => Promise<TData>) => {
+    return async () => {
+        const token = await getToken();
         const res = await fetch(process.env.STORYBOOK_API_URL ?? "", {
             method: 'POST',
             headers: {

@@ -9,8 +9,7 @@ generates:
       - "typescript-react-query"
     config:
       # relative to generated file
-      fetcher: './fetcher#useFetchData'
-      isReactHook: true
+      fetcher: './fetcher#fetchData'
       omitOperationSuffix: true
       exposeQueryKeys: true
       errorType: Error
