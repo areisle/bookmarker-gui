@@ -1,15 +1,16 @@
 import React from "react"
 import ReactDom from "react-dom"
+import { OptionsPage } from "./pages/OptionsPage"
 import { AuthProvider, QueryProvider } from "./queries"
 import { CustomThemeProvider } from "./theme"
 
-function OptionsPage() {
+function Options() {
     return (
         <span>
             <CustomThemeProvider>
                 <QueryProvider>
                     <AuthProvider>
-                        options page
+                        <OptionsPage />
                     </AuthProvider>
                 </QueryProvider>
             </CustomThemeProvider>
@@ -17,4 +18,4 @@ function OptionsPage() {
     )
 }
 
-ReactDom.render(<OptionsPage />, document.getElementById('root'))
+ReactDom.render(<Options />, document.getElementById('root'))

@@ -5,9 +5,10 @@
  */
 
 const get = async (key: string) => {
-    if (typeof chrome !== 'undefined') {
+    if (typeof chrome !== 'undefined' && chrome.storage) {
+        console.log({ chrome })
         return new Promise<string>((resolve) => {
-            chrome.storage.local.get([key], (result) => {
+            chrome.storage.sync.get([key], (result) => {
                 resolve(result[key]);
             });
         });
@@ -16,10 +17,10 @@ const get = async (key: string) => {
 }
 
 const set = async (key: string, value: string) => {
-    if (typeof chrome !== 'undefined') {
-        console.log('storage set', key, value)
+    if (typeof chrome !== 'undefined' && chrome.storage) {
+        console.log(chrome)
         return new Promise((resolve) => {
-            chrome.storage.local.set({ [key]: value }, () => {
+            chrome.storage.sync.set({ [key]: value }, () => {
                 resolve(null);
             });
         });
@@ -28,10 +29,9 @@ const set = async (key: string, value: string) => {
 }
 
 const remove = async (key: string) => {
-    if (typeof chrome !== 'undefined') {
-        console.log('storage remove', key)
+    if (typeof chrome !== 'undefined' && chrome.storage) {
         return new Promise((resolve) => {
-            chrome.storage.local.remove([key], () => {
+            chrome.storage.sync.remove([key], () => {
                 resolve(null);
             });
         });

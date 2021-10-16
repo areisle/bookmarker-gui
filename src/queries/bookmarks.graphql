@@ -28,8 +28,49 @@ query bookmarks(
 query bookmarksForUrl($url: String!) {
     bookmarksForUrl(url: $url) {
         id
+        title
+        url
+        description
+        createdAt
         category {
             id
         }
+        tags {
+            name
+            createdByCurrentUser
+        }
     }
+}
+
+query getBookmark($id: Int!) {
+    bookmark(id: $id) {
+        title
+        url
+        description
+        createdAt
+    }
+}
+
+query bookmarkTags($id: Int!) {
+    bookmark(id: $id) {
+        tags {
+            id
+            name
+            createdByCurrentUser
+        }
+    }
+}
+
+mutation addBookmark($input: CreateBookmarkContent!) {
+    addBookmark(input: $input) {
+        id
+    }
+}
+
+mutation removeBookmark($id: Int!) {
+    removeBookmark(id: $id)
+}
+
+mutation updateBookmark($id: Int!, $input: UpdateBookmarkContent!) {
+    updateBookmark(bookmarkId: $id, input: $input)
 }

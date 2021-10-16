@@ -38,14 +38,6 @@ export type BookmarkAlias = {
   pattern: Scalars['String'];
 };
 
-export type BookmarkContent = {
-  category: Scalars['Int'];
-  description?: Maybe<Scalars['String']>;
-  tags: Array<Scalars['String']>;
-  title: Scalars['String'];
-  url: Scalars['String'];
-};
-
 export type Category = {
   __typename?: 'Category';
   createdAt: Scalars['Date'];
@@ -55,22 +47,32 @@ export type Category = {
   users: Array<UserCategory>;
 };
 
+export type CreateBookmarkContent = {
+  categoryId: Scalars['Int'];
+  description?: Maybe<Scalars['String']>;
+  tags?: Maybe<Array<Scalars['String']>>;
+  title: Scalars['String'];
+  url: Scalars['String'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
-  addBookmark: Bookmark;
+  addBookmark?: Maybe<Bookmark>;
   addCategory?: Maybe<Category>;
   addTag?: Maybe<Scalars['Void']>;
   addUsers?: Maybe<Scalars['Void']>;
   batchUpdateHostName?: Maybe<Scalars['Void']>;
   leaveCategory?: Maybe<Scalars['Void']>;
   login: Scalars['String'];
+  removeBookmark?: Maybe<Scalars['Void']>;
   removeTag?: Maybe<Scalars['Void']>;
   removeUser?: Maybe<Scalars['Void']>;
+  updateBookmark?: Maybe<Scalars['Void']>;
 };
 
 
 export type MutationAddBookmarkArgs = {
-  input?: Maybe<BookmarkContent>;
+  input: CreateBookmarkContent;
 };
 
 
@@ -109,6 +111,11 @@ export type MutationLoginArgs = {
 };
 
 
+export type MutationRemoveBookmarkArgs = {
+  id: Scalars['Int'];
+};
+
+
 export type MutationRemoveTagArgs = {
   bookmarkId: Scalars['Int'];
   name: Scalars['String'];
@@ -120,8 +127,15 @@ export type MutationRemoveUserArgs = {
   id: Scalars['Int'];
 };
 
+
+export type MutationUpdateBookmarkArgs = {
+  bookmarkId: Scalars['Int'];
+  input: UpdateBookmarkContent;
+};
+
 export type Query = {
   __typename?: 'Query';
+  bookmark?: Maybe<Bookmark>;
   bookmarks: Array<Bookmark>;
   bookmarksForUrl: Array<Bookmark>;
   categories: Array<Category>;
@@ -129,6 +143,11 @@ export type Query = {
   isBookmarked?: Maybe<Scalars['Boolean']>;
   tags: Array<Tag>;
   users: Array<UserCategory>;
+};
+
+
+export type QueryBookmarkArgs = {
+  id: Scalars['Int'];
 };
 
 
@@ -188,6 +207,13 @@ export type Tag = {
   name: Scalars['String'];
 };
 
+export type UpdateBookmarkContent = {
+  description?: Maybe<Scalars['String']>;
+  tags?: Maybe<Array<Scalars['String']>>;
+  title?: Maybe<Scalars['String']>;
+  url?: Maybe<Scalars['String']>;
+};
+
 export type User = {
   __typename?: 'User';
   createdAt: Scalars['Date'];
@@ -222,7 +248,43 @@ export type BookmarksForUrlVariables = Exact<{
 }>;
 
 
-export type BookmarksForUrl = { __typename?: 'Query', bookmarksForUrl: Array<{ __typename?: 'Bookmark', id: number, category: { __typename?: 'Category', id: number, name: string } }> };
+export type BookmarksForUrl = { __typename?: 'Query', bookmarksForUrl: Array<{ __typename?: 'Bookmark', id: number, title: string, url: string, description?: string | null | undefined, createdAt: any, category: { __typename?: 'Category', id: number }, tags: Array<{ __typename?: 'Tag', name: string, createdByCurrentUser: boolean }> }> };
+
+export type GetBookmarkVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type GetBookmark = { __typename?: 'Query', bookmark?: { __typename?: 'Bookmark', title: string, url: string, description?: string | null | undefined, createdAt: any } | null | undefined };
+
+export type BookmarkTagsVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type BookmarkTags = { __typename?: 'Query', bookmark?: { __typename?: 'Bookmark', tags: Array<{ __typename?: 'Tag', id: number, name: string, createdByCurrentUser: boolean }> } | null | undefined };
+
+export type AddBookmarkVariables = Exact<{
+  input: CreateBookmarkContent;
+}>;
+
+
+export type AddBookmark = { __typename?: 'Mutation', addBookmark?: { __typename?: 'Bookmark', id: number } | null | undefined };
+
+export type RemoveBookmarkVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type RemoveBookmark = { __typename?: 'Mutation', removeBookmark?: any | null | undefined };
+
+export type UpdateBookmarkVariables = Exact<{
+  id: Scalars['Int'];
+  input: UpdateBookmarkContent;
+}>;
+
+
+export type UpdateBookmark = { __typename?: 'Mutation', updateBookmark?: any | null | undefined };
 
 export type CategoriesVariables = Exact<{ [key: string]: never; }>;
 
@@ -331,9 +393,16 @@ export const BookmarksForUrlDocument = `
     query bookmarksForUrl($url: String!) {
   bookmarksForUrl(url: $url) {
     id
+    title
+    url
+    description
+    createdAt
     category {
       id
+    }
+    tags {
       name
+      createdByCurrentUser
     }
   }
 }
@@ -352,6 +421,96 @@ export const useBookmarksForUrl = <
     );
 useBookmarksForUrl.getKey = (variables: BookmarksForUrlVariables) => ['bookmarksForUrl', variables];
 
+export const GetBookmarkDocument = `
+    query getBookmark($id: Int!) {
+  bookmark(id: $id) {
+    title
+    url
+    description
+    createdAt
+  }
+}
+    `;
+export const useGetBookmark = <
+      TData = GetBookmark,
+      TError = Error
+    >(
+      variables: GetBookmarkVariables, 
+      options?: UseQueryOptions<GetBookmark, TError, TData>
+    ) => 
+    useQuery<GetBookmark, TError, TData>(
+      ['getBookmark', variables],
+      fetchData<GetBookmark, GetBookmarkVariables>(GetBookmarkDocument, variables),
+      options
+    );
+useGetBookmark.getKey = (variables: GetBookmarkVariables) => ['getBookmark', variables];
+
+export const BookmarkTagsDocument = `
+    query bookmarkTags($id: Int!) {
+  bookmark(id: $id) {
+    tags {
+      id
+      name
+      createdByCurrentUser
+    }
+  }
+}
+    `;
+export const useBookmarkTags = <
+      TData = BookmarkTags,
+      TError = Error
+    >(
+      variables: BookmarkTagsVariables, 
+      options?: UseQueryOptions<BookmarkTags, TError, TData>
+    ) => 
+    useQuery<BookmarkTags, TError, TData>(
+      ['bookmarkTags', variables],
+      fetchData<BookmarkTags, BookmarkTagsVariables>(BookmarkTagsDocument, variables),
+      options
+    );
+useBookmarkTags.getKey = (variables: BookmarkTagsVariables) => ['bookmarkTags', variables];
+
+export const AddBookmarkDocument = `
+    mutation addBookmark($input: CreateBookmarkContent!) {
+  addBookmark(input: $input) {
+    id
+  }
+}
+    `;
+export const useAddBookmark = <
+      TError = Error,
+      TContext = unknown
+    >(options?: UseMutationOptions<AddBookmark, TError, AddBookmarkVariables, TContext>) => 
+    useMutation<AddBookmark, TError, AddBookmarkVariables, TContext>(
+      (variables?: AddBookmarkVariables) => fetchData<AddBookmark, AddBookmarkVariables>(AddBookmarkDocument, variables)(),
+      options
+    );
+export const RemoveBookmarkDocument = `
+    mutation removeBookmark($id: Int!) {
+  removeBookmark(id: $id)
+}
+    `;
+export const useRemoveBookmark = <
+      TError = Error,
+      TContext = unknown
+    >(options?: UseMutationOptions<RemoveBookmark, TError, RemoveBookmarkVariables, TContext>) => 
+    useMutation<RemoveBookmark, TError, RemoveBookmarkVariables, TContext>(
+      (variables?: RemoveBookmarkVariables) => fetchData<RemoveBookmark, RemoveBookmarkVariables>(RemoveBookmarkDocument, variables)(),
+      options
+    );
+export const UpdateBookmarkDocument = `
+    mutation updateBookmark($id: Int!, $input: UpdateBookmarkContent!) {
+  updateBookmark(bookmarkId: $id, input: $input)
+}
+    `;
+export const useUpdateBookmark = <
+      TError = Error,
+      TContext = unknown
+    >(options?: UseMutationOptions<UpdateBookmark, TError, UpdateBookmarkVariables, TContext>) => 
+    useMutation<UpdateBookmark, TError, UpdateBookmarkVariables, TContext>(
+      (variables?: UpdateBookmarkVariables) => fetchData<UpdateBookmark, UpdateBookmarkVariables>(UpdateBookmarkDocument, variables)(),
+      options
+    );
 export const CategoriesDocument = `
     query categories {
   categories {
