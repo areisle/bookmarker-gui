@@ -1,3 +1,4 @@
+import { Link } from "@mui/material"
 import React from "react"
 import ReactDom from "react-dom"
 import { PopupPage as Popup } from "./pages/PopupPage"
@@ -10,6 +11,7 @@ function PopupPage() {
             <CustomThemeProvider>
                 <QueryProvider>
                     <AuthProvider isPopup={true}>
+                        <Link onClick={() => chrome?.runtime.openOptionsPage()}>see all bookmarks</Link>
                         <Popup />
                     </AuthProvider>
                 </QueryProvider>
