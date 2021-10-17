@@ -45,7 +45,20 @@ export type Category = {
   id: Scalars['Int'];
   modifiedAt: Scalars['Date'];
   name: Scalars['String'];
+  rules: Array<CategoryPatternAlias>;
   users: Array<UserCategory>;
+};
+
+export type CategoryPatternAlias = {
+  __typename?: 'CategoryPatternAlias';
+  canonical: Scalars['String'];
+  category: Category;
+  categoryId: Scalars['Int'];
+  createdAt: Scalars['Date'];
+  id: Scalars['Int'];
+  match: Scalars['String'];
+  modifiedAt: Scalars['Date'];
+  origin: Scalars['String'];
 };
 
 export type CreateBookmarkContent = {
@@ -69,6 +82,7 @@ export type Mutation = {
   removeTag?: Maybe<Scalars['Void']>;
   removeUser?: Maybe<Scalars['Void']>;
   updateBookmark?: Maybe<Scalars['Void']>;
+  updateCategory?: Maybe<Scalars['Void']>;
 };
 
 
@@ -132,6 +146,12 @@ export type MutationRemoveUserArgs = {
 export type MutationUpdateBookmarkArgs = {
   bookmarkId: Scalars['Int'];
   input: UpdateBookmarkContent;
+};
+
+
+export type MutationUpdateCategoryArgs = {
+  id: Scalars['Int'];
+  input?: Maybe<UpdateCategoryContent>;
 };
 
 export type Query = {
@@ -216,6 +236,10 @@ export type UpdateBookmarkContent = {
   url?: Maybe<Scalars['String']>;
 };
 
+export type UpdateCategoryContent = {
+  title?: Maybe<Scalars['String']>;
+};
+
 export type User = {
   __typename?: 'User';
   createdAt: Scalars['Date'];
@@ -292,6 +316,13 @@ export type CategoriesVariables = Exact<{ [key: string]: never; }>;
 
 
 export type Categories = { __typename?: 'Query', categories: Array<{ __typename?: 'Category', id: number, name: string }> };
+
+export type GetCategoryVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type GetCategory = { __typename?: 'Query', category?: { __typename?: 'Category', name: string, rules: Array<{ __typename?: 'CategoryPatternAlias', match: string, canonical: string, origin: string }>, users: Array<{ __typename?: 'UserCategory', id: number, active: boolean, admin: boolean, user: { __typename?: 'User', email: string } }> } | null | undefined };
 
 export type AddCategoryVariables = Exact<{
   name: Scalars['String'];
@@ -542,6 +573,40 @@ export const useCategories = <
       options
     );
 useCategories.getKey = (variables?: CategoriesVariables) => variables === undefined ? ['categories'] : ['categories', variables];
+
+export const GetCategoryDocument = `
+    query getCategory($id: Int!) {
+  category(id: $id) {
+    name
+    rules {
+      match
+      canonical
+      origin
+    }
+    users {
+      id
+      active
+      admin
+      user {
+        email
+      }
+    }
+  }
+}
+    `;
+export const useGetCategory = <
+      TData = GetCategory,
+      TError = Error
+    >(
+      variables: GetCategoryVariables, 
+      options?: UseQueryOptions<GetCategory, TError, TData>
+    ) => 
+    useQuery<GetCategory, TError, TData>(
+      ['getCategory', variables],
+      fetchData<GetCategory, GetCategoryVariables>(GetCategoryDocument, variables),
+      options
+    );
+useGetCategory.getKey = (variables: GetCategoryVariables) => ['getCategory', variables];
 
 export const AddCategoryDocument = `
     mutation addCategory($name: String!) {

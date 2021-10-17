@@ -59,7 +59,6 @@ function Category(props: CategoryProps) {
                 <BookmarksList category={id} />
             </TabPanel>
             <TabPanel value={tab} index={1}>
-                <Typography variant='h3'>Users</Typography>
                 <CategorySettings id={id} />
             </TabPanel>
         </>

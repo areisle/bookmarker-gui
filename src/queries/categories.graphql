@@ -5,6 +5,25 @@ query categories {
     }
 }
 
+query getCategory($id: Int!) {
+    category(id: $id) {
+        name
+        rules {
+            match
+            canonical
+            origin
+        }
+        users {
+            id
+            active
+            admin
+            user {
+                email
+            }
+        }
+    }
+}
+
 mutation addCategory($name: String!) {
     addCategory(name: $name) {
         id
