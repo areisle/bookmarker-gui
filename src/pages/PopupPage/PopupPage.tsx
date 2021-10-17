@@ -1,15 +1,10 @@
-import { Box, Typography } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 import React from 'react';
-import { useQuery } from 'react-query';
-import { CategorySelect } from '../../components';
-import { useBookmarksForUrl } from '../../queries';
-import { getCurrentTab } from '../../queries/chrome';
-import { useDefaultCategory } from './useDefaultCategory';
+import { BookmarkEditor, CategorySelect } from '../../components';
+import { useAddBookmark, useRemoveBookmark, useUpdateBookmark } from '../../queries';
+import { useBookmark } from './useSelectedBookmark';
+import { useSelectedCategory } from './useSelectedCategory';
 
-interface PopupPageProps {
-    /** url of page user is on when in extension */
-    // url: string;
-}
 
 /**
  * allow user to add/edit/delete bookmark for active page
@@ -17,48 +12,66 @@ interface PopupPageProps {
  * if multiple bookmarks are returned for url what should it do?
  * probably look at whatever category was last selected,
  * or show a select for category
- * @param props
  * @returns
  */
-function PopupPage(props: PopupPageProps) {
-    const { data: tab } = useQuery('current-tab', getCurrentTab);
-
-    const { data: bookmarks, isLoading, error } = useBookmarksForUrl(
-        { url: tab?.url! },
-        { enabled: Boolean(tab?.url), select: (response) => response.bookmarksForUrl }
-    );
+function PopupPage() {
+    const { categoryId, setCategoryId } = useSelectedCategory();
 
     const {
-        data: categoryId,
-        update: updateCategoryId,
-    } = useDefaultCategory(bookmarks);
+        bookmark,
+        isLoading: isLoadingBookmark,
+        error: errorLoadingBookmark,
+        refetch,
+        bookmarkedCategories,
+    } = useBookmark(categoryId, setCategoryId);
 
-    console.log(categoryId, bookmarks)
+    const {
+        mutate: addBookmark,
+        error: errorAdding,
+        isLoading: isAdding
+    } = useAddBookmark({ onSuccess: () => refetch() });
 
-    if (isLoading) {
-        return <Typography>loading bookmarks for url...</Typography>
-    }
+    const {
+        mutate: removeBookmark,
+        error: errorRemoving,
+        isLoading: isRemoving
+    } = useRemoveBookmark({ onSuccess: () => refetch() });
 
-    if (error) {
-        return <Typography color='error'>Unable to load bookmarks for url. {error.message}</Typography>
+    const {
+        mutate: updateBookmark,
+        error: errorUpdating,
+        isLoading: isUpdating
+    } = useUpdateBookmark({ onSuccess: () => refetch() });
+
+    if (errorLoadingBookmark) {
+        return (
+            <Typography color='error'>
+                Unable to load bookmarks for url. {errorLoadingBookmark.message}
+            </Typography>
+        )
     }
 
     return (
         <Box sx={{ minWidth: '300px', minHeight: '200px' }}>
-            {/* category select */}
-            <CategorySelect
-                value={categoryId}
-                onChange={updateCategoryId}
-            />
-
-            {bookmarks?.length ? (
-                <Typography>bookmarked</Typography>
-            ) : (
-                <Typography>no bookmarks to show</Typography>
-            )}
+            <Stack spacing={1.5}>
+                <CategorySelect
+                    value={categoryId}
+                    onChange={(value) => setCategoryId(value)}
+                    bookmarkedCategories={bookmarkedCategories}
+                />
+                <BookmarkEditor
+                    bookmark={bookmark}
+                    onAdd={addBookmark}
+                    onDelete={removeBookmark}
+                    onUpdate={updateBookmark}
+                    error={errorAdding || errorRemoving || errorUpdating}
+                    isDeleting={isRemoving}
+                    isProcessing={isAdding || isUpdating}
+                    isLoading={isLoadingBookmark}
+                />
+            </Stack>
         </Box>
     );
 }
 
 export { PopupPage };
-export type { PopupPageProps };
