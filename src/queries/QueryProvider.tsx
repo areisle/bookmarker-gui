@@ -1,13 +1,7 @@
 import React, { ReactNode } from "react"
 import { QueryClient, QueryClientProvider } from "react-query"
 
-const queryClient = new QueryClient({
-    defaultOptions: {
-        queries: {
-            refetchOnWindowFocus: false
-        }
-    }
-})
+const queryClient = new QueryClient()
 
 function QueryProvider({ children }: { children: ReactNode }) {
     return (
