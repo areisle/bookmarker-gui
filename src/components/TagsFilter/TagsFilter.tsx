@@ -86,8 +86,6 @@ function TagsFilter(props: TagsFilterProps) {
                                 }}
                                 clickable={true}
                                 icon={exclude ? <Remove /> : <Add />}
-                                color='primary'
-                                size='small'
                             />
                         )
                     })

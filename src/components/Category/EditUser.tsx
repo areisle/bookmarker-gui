@@ -34,11 +34,13 @@ function EditUser(props: EditUserProps) {
         <span>
             <IconButton
                 onClick={() => setOpen(true)}
-                size='small'
             >
                 <Edit />
             </IconButton>
-            <Dialog open={open} onClose={() => setOpen(false)}>
+            <Dialog
+                open={open}
+                onClose={() => setOpen(false)}
+            >
                 <DialogTitle>Edit User</DialogTitle>
                 <DialogContent>
                     {/* TODO allow swapping admin or not? */}
