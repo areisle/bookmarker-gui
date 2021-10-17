@@ -6,10 +6,11 @@ import { useCategories } from '../../queries';
 interface CategorySelectProps {
     value: number | null;
     onChange: (id: number) => void;
+    bookmarkedCategories: number[] | undefined;
 }
 
 function CategorySelect(props: CategorySelectProps) {
-    const { value, onChange } = props;
+    const { value, onChange, bookmarkedCategories } = props;
 
     const { data, isLoading, error } = useCategories(
         {},
@@ -21,7 +22,7 @@ function CategorySelect(props: CategorySelectProps) {
             <TextField
                 select
                 label="Category"
-                value={value}
+                value={value ?? 0}
                 onChange={(e) => onChange(Number(e.target.value))}
                 error={Boolean(error)}
                 helperText={error ? error.message : ''}
@@ -30,15 +31,17 @@ function CategorySelect(props: CategorySelectProps) {
                 }}
                 sx={{ minWidth: '200px' }}
             >
+
+                <MenuItem value={0}>
+                    None
+                </MenuItem>
                 {data?.map((option) => (
                     <MenuItem key={option.id} value={option.id}>
                         {option.name}
+                        {' '}
+                        <span>{bookmarkedCategories?.includes(option.id) ? '★' : null}</span>
                     </MenuItem>
-                )) ?? (
-                        <MenuItem value={0}>
-                            No Categories
-                        </MenuItem>
-                    )}
+                ))}
             </TextField>
         </Box>
     );
