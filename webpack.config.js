@@ -9,7 +9,7 @@ const htmlTemplate = `
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>webpack App</title>
+    <title>bookmarker</title>
   </head>
   <body>
     <div id='root'></div>
