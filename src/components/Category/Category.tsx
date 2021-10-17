@@ -2,7 +2,7 @@ import { Tab, Tabs, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import React, { useState } from 'react';
 import { BookmarksList } from '../BookmarksList';
-import { CategoryUsers } from './CategoryUsers';
+import { CategorySettings } from './CategorySettings';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -60,7 +60,7 @@ function Category(props: CategoryProps) {
             </TabPanel>
             <TabPanel value={tab} index={1}>
                 <Typography variant='h3'>Users</Typography>
-                <CategoryUsers id={id} />
+                <CategorySettings id={id} />
             </TabPanel>
         </>
     );

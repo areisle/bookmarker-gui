@@ -6,11 +6,11 @@ import { ConfirmButton } from '../ConfirmButton';
 import { AddUser } from './AddUser';
 import { EditUser } from './EditUser';
 
-interface CategoryUsersProps {
+interface CategorySettingsProps {
     id: number;
 }
 
-function CategoryUsers(props: CategoryUsersProps) {
+function CategorySettings(props: CategorySettingsProps) {
     const { id } = props;
     const { data: users, error, isLoading } = useUsers(
         { categoryId: id },
@@ -91,5 +91,5 @@ function CategoryUsers(props: CategoryUsersProps) {
     );
 }
 
-export { CategoryUsers };
-export type { CategoryUsersProps };
+export { CategorySettings };
+export type { CategorySettingsProps };
