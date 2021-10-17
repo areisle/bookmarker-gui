@@ -22,7 +22,6 @@ function LoadingSkeleton(props: LoadingSkeletonProps) {
                 {React.Children.map(children, (child) => {
                     let sWidth = width
                     if (isValidElement(child)) {
-                        console.log(child.props)
                         sWidth = child.props.fullWidth ? '100%' : width
                     }
                     return (
@@ -179,7 +178,6 @@ function BookmarkEditor(props: BookmarkEditorProps) {
                     multiline={true}
                     disabled={isDisabled}
                     onChange={handleChange}
-                    onBlur={console.log}
                     fullWidth={true}
                 />
                 <TagsEditor

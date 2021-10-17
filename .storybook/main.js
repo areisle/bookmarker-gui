@@ -21,8 +21,6 @@ module.exports = {
             plugin.definitions['process.env'][key] = JSON.stringify(env[key]);
         });
 
-        console.log(plugin.definitions['process.env'])
-
         return {
             ...config,
             resolve: {
