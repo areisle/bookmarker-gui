@@ -54,7 +54,7 @@ function OptionsPage() {
                             onClick={() => setId(category.id)}
                             selected={category.id === id}
                         >
-                            <ListItemText>{category.name}</ListItemText>
+                            <ListItemText primary={category.name} />
                         </MenuItem>
                     ))}
                     <ListItem>
