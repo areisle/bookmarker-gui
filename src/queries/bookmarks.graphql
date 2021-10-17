@@ -17,10 +17,15 @@ query bookmarks(
         url
         description
         createdAt
-        tags {
+        category {
             id
+        }
+        tags {
             createdByCurrentUser
             name
+        }
+        aliases {
+            url
         }
     }
 }
@@ -38,6 +43,9 @@ query bookmarksForUrl($url: String!) {
         tags {
             name
             createdByCurrentUser
+        }
+        aliases {
+            url
         }
     }
 }

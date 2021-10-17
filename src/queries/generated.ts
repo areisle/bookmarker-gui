@@ -18,6 +18,7 @@ export type Scalars = {
 
 export type Bookmark = {
   __typename?: 'Bookmark';
+  aliases: Array<BookmarkAlias>;
   category: Category;
   categoryId: Scalars['Int'];
   createdAt: Scalars['Date'];
@@ -35,7 +36,7 @@ export type BookmarkAlias = {
   createdAt: Scalars['Date'];
   id: Scalars['Int'];
   modifiedAt: Scalars['Date'];
-  pattern: Scalars['String'];
+  url: Scalars['String'];
 };
 
 export type Category = {
@@ -208,6 +209,7 @@ export type Tag = {
 };
 
 export type UpdateBookmarkContent = {
+  aliases?: Maybe<Array<Scalars['String']>>;
   description?: Maybe<Scalars['String']>;
   tags?: Maybe<Array<Scalars['String']>>;
   title?: Maybe<Scalars['String']>;
@@ -241,14 +243,14 @@ export type BookmarksVariables = Exact<{
 }>;
 
 
-export type Bookmarks = { __typename?: 'Query', bookmarks: Array<{ __typename?: 'Bookmark', id: number, title: string, url: string, description?: string | null | undefined, createdAt: any, tags: Array<{ __typename?: 'Tag', id: number, createdByCurrentUser: boolean, name: string }> }> };
+export type Bookmarks = { __typename?: 'Query', bookmarks: Array<{ __typename?: 'Bookmark', id: number, title: string, url: string, description?: string | null | undefined, createdAt: any, category: { __typename?: 'Category', id: number }, tags: Array<{ __typename?: 'Tag', createdByCurrentUser: boolean, name: string }>, aliases: Array<{ __typename?: 'BookmarkAlias', url: string }> }> };
 
 export type BookmarksForUrlVariables = Exact<{
   url: Scalars['String'];
 }>;
 
 
-export type BookmarksForUrl = { __typename?: 'Query', bookmarksForUrl: Array<{ __typename?: 'Bookmark', id: number, title: string, url: string, description?: string | null | undefined, createdAt: any, category: { __typename?: 'Category', id: number }, tags: Array<{ __typename?: 'Tag', name: string, createdByCurrentUser: boolean }> }> };
+export type BookmarksForUrl = { __typename?: 'Query', bookmarksForUrl: Array<{ __typename?: 'Bookmark', id: number, title: string, url: string, description?: string | null | undefined, createdAt: any, category: { __typename?: 'Category', id: number }, tags: Array<{ __typename?: 'Tag', name: string, createdByCurrentUser: boolean }>, aliases: Array<{ __typename?: 'BookmarkAlias', url: string }> }> };
 
 export type GetBookmarkVariables = Exact<{
   id: Scalars['Int'];
@@ -367,10 +369,15 @@ export const BookmarksDocument = `
     url
     description
     createdAt
-    tags {
+    category {
       id
+    }
+    tags {
       createdByCurrentUser
       name
+    }
+    aliases {
+      url
     }
   }
 }
@@ -403,6 +410,9 @@ export const BookmarksForUrlDocument = `
     tags {
       name
       createdByCurrentUser
+    }
+    aliases {
+      url
     }
   }
 }
