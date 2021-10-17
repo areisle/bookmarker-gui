@@ -32,7 +32,6 @@ function AddCategory() {
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyUp={handleEnter}
-                size='small'
                 InputProps={{
                     endAdornment: (
                         <React.Fragment>
