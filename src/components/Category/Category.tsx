@@ -1,4 +1,4 @@
-import { Tab, Tabs } from '@mui/material';
+import { Tab, Tabs, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import React, { useState } from 'react';
 import { BookmarksList } from '../BookmarksList';
@@ -53,12 +53,13 @@ function Category(props: CategoryProps) {
                 sx={{ position: 'sticky', top: 0, zIndex: 1, bgcolor: 'background.paper', pl: 1 }}
             >
                 <Tab label="Bookmarks" {...a11yProps(0)} sx={{ bgcolor: 'background.paper' }} />
-                <Tab label="Users" {...a11yProps(1)} sx={{ bgcolor: 'background.paper' }} />
+                <Tab label="Settings" {...a11yProps(1)} sx={{ bgcolor: 'background.paper' }} />
             </Tabs>
             <TabPanel value={tab} index={0}>
                 <BookmarksList category={id} />
             </TabPanel>
             <TabPanel value={tab} index={1}>
+                <Typography variant='h3'>Users</Typography>
                 <CategoryUsers id={id} />
             </TabPanel>
         </>
