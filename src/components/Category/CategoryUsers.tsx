@@ -2,6 +2,7 @@ import { Table, TableHead, TableRow, TableBody, TableCell, Typography, Box, Butt
 import React, { ReactNode } from 'react';
 import { useQueryClient } from 'react-query';
 import { useLeaveCategory, useUsers } from '../../queries';
+import { ConfirmButton } from '../ConfirmButton';
 import { AddUser } from './AddUser';
 import { EditUser } from './EditUser';
 
@@ -78,13 +79,13 @@ function CategoryUsers(props: CategoryUsersProps) {
             </Table>
             <Box p={1} sx={{ display: 'flex', gap: 1 }}>
                 <AddUser categoryId={id} />
-                {/* TODO add confirm */}
-                <Button
+                <ConfirmButton
+                    confirmText={`Confirm ${users?.length === 1 ? 'delete' : 'leave'} category?`}
                     onClick={() => leaveCategory({ id })}
                     color='error'
                 >
                     {users?.length === 1 ? 'Delete' : 'Leave'} Category
-                </Button>
+                </ConfirmButton>
             </Box>
         </div>
     );
