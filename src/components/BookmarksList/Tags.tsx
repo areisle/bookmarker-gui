@@ -1,10 +1,9 @@
-import { Chip } from '@mui/material';
 import { Box } from '@mui/system';
-import React, { useMemo } from 'react';
+import React from 'react';
+import { GroupedTags, useGroupedTags } from '../GroupedTags';
 
 interface TagsProps {
     tags: {
-        id: number;
         name: string;
         createdByCurrentUser: boolean;
     }[];
@@ -22,49 +21,15 @@ interface TagsProps {
 function Tags(props: TagsProps) {
     const { tags, onDelete, onAdd } = props;
 
-    const groupedTags = useMemo(() => {
-        const tagsByCurrentUser = new Set();
-        tags.forEach((tag) => {
-            if (tag.createdByCurrentUser) {
-                tagsByCurrentUser.add(tag.name)
-            }
-        })
-
-        const next = tags.filter((tag) => {
-            if (!tagsByCurrentUser.has(tag.name) || tag.createdByCurrentUser) {
-                return true
-            }
-        })
-        return next;
-    }, [tags]);
+    const groupedTags = useGroupedTags(tags);
 
     return (
         <Box sx={{ display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
-            {groupedTags.map((tag) => {
-                if (tag.createdByCurrentUser) {
-                    return (
-                        <Chip
-                            label={tag.name}
-                            key={tag.id}
-                            color='primary'
-                            onDelete={() => onDelete(tag.name)}
-                            size='small'
-                        />
-                    )
-                }
-
-                return (
-                    <Chip
-                        label={tag.name}
-                        key={tag.id}
-                        clickable={true}
-                        variant='outlined'
-                        color='primary'
-                        size='small'
-                        onClick={() => onAdd(tag.name)}
-                    />
-                )
-            })}
+            <GroupedTags
+                onAdd={onAdd}
+                onDelete={onDelete}
+                tags={groupedTags}
+            />
         </Box>
     )
 }
