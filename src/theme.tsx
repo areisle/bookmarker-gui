@@ -1,58 +1,48 @@
 import React from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { ReactNode } from 'react';
+import { GlobalStyles } from '@mui/material';
 
-declare module '@mui/material/styles' {
-    interface Theme {
-        status?: {
-            danger: React.CSSProperties['color'];
-        };
-    }
-
-    interface Palette {
-        neutral: Palette['primary'];
-    }
-    interface PaletteOptions {
-        neutral: PaletteOptions['primary'];
-    }
-
-    interface PaletteColor {
-        darker?: string;
-    }
-    interface SimplePaletteColorOptions {
-        darker?: string;
-    }
-    interface ThemeOptions {
-        status?: {
-            danger: React.CSSProperties['color'];
-        };
-    }
+const styles = `
+.MuiLink-root:visited {
+    color: #2b1691;
+    text-decoration-color: #2b1691;
 }
+`;
 
-declare module '@mui/material/Button' {
-    interface ButtonPropsColorOverrides {
-        neutral: true;
-    }
-}
+const inputGlobalStyles = <GlobalStyles styles={styles} />;
 
 const theme = createTheme({
-    palette: {
-        neutral: {
-            main: '#64748B',
-            contrastText: '#fff',
-        },
-    },
     components: {
+        MuiInputBase: {
+            styleOverrides: {
+                root: {
+                    fontSize: '0.9rem'
+                }
+            }
+        },
+        MuiInputLabel: {
+            styleOverrides: {
+                root: {
+                    fontSize: '0.9rem'
+                }
+            }
+        },
         MuiButton: {
             defaultProps: {
                 variant: 'outlined'
+            },
+            styleOverrides: {
+                root: {
+                    fontSize: '0.8rem'
+                }
             }
         },
         MuiTextField: {
             defaultProps: {
                 margin: 'none',
                 size: 'small'
-            }
+            },
         },
         MuiAutocomplete: {
             defaultProps: {
@@ -63,10 +53,40 @@ const theme = createTheme({
             defaultProps: {
                 dense: true,
             }
+        },
+        MuiIconButton: {
+            defaultProps: {
+                size: 'small',
+            }
+        },
+        MuiIcon: {
+            defaultProps: {
+                fontSize: 'small'
+            }
+        },
+        MuiTable: {
+            defaultProps: {
+                size: 'small'
+            }
+        },
+        MuiLink: {
+            defaultProps: {
+                target: '_blank',
+                rel: 'noopener'
+            }
+        },
+        MuiChip: {
+            defaultProps: {
+                size: 'small',
+                color: 'primary'
+            }
         }
     }
 });
 
 export const CustomThemeProvider = ({ children }: { children: ReactNode }) => (
-    <ThemeProvider theme={theme}>{children}</ThemeProvider>
+    <ThemeProvider theme={theme}>
+        {inputGlobalStyles}
+        {children}
+    </ThemeProvider>
 )
