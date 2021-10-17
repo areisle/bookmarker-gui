@@ -2,6 +2,7 @@ import { Button, Link, Table, TableBody, TableCell, TableRow, Typography } from 
 import { Box } from '@mui/system';
 import React, { ReactNode, useLayoutEffect, useMemo, useState } from 'react';
 import { useAddTag, useBookmarks, useRemoveTag } from '../../queries';
+import { BookmarkEditorDialogButton } from '../BookmarkEditor';
 import { TagsFilter } from '../TagsFilter';
 import { Header } from './Header';
 import { Tags } from './Tags';
@@ -96,7 +97,7 @@ function BookmarksList(props: BookmarksListProps) {
                 value={tagFilters}
                 onChange={setTagFilters}
             />
-            <Table size='small' stickyHeader>
+            <Table stickyHeader>
                 <Header
                     order={order}
                     orderBy={orderBy}
@@ -118,7 +119,10 @@ function BookmarksList(props: BookmarksListProps) {
                             tabIndex={-1}
                         >
                             <TableCell>
-                                <Link target='_blank' href={row.url}>{row.title}</Link>
+                                <Link href={row.url}>{row.title}</Link>
+                            </TableCell>
+                            <TableCell>
+                                {row.aliases.length || null}
                             </TableCell>
                             <TableCell>{row.createdAt}</TableCell>
                             <TableCell>{row.description}</TableCell>
@@ -127,6 +131,12 @@ function BookmarksList(props: BookmarksListProps) {
                                     tags={row.tags}
                                     onAdd={(tagName) => handleAddTag(row.id, tagName)}
                                     onDelete={(tagName) => handleDeleteTag(row.id, tagName)}
+                                />
+                            </TableCell>
+                            <TableCell padding='none'>
+                                <BookmarkEditorDialogButton
+                                    bookmark={row}
+                                    onSuccess={refetchBookmarks}
                                 />
                             </TableCell>
                         </TableRow>

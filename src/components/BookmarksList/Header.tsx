@@ -60,6 +60,9 @@ function Header(props: EnhancedTableProps) {
                     orderBy={orderBy}
                     onRequestSort={onRequestSort}
                 />
+                <TableCell sx={{ top: 48 }}>
+                    aliases
+                </TableCell>
                 <SortableHeaderCell
                     field='createdAt'
                     order={order}
@@ -71,6 +74,9 @@ function Header(props: EnhancedTableProps) {
                 </TableCell>
                 <TableCell sx={{ top: 48 }}>
                     tags
+                </TableCell>
+                <TableCell sx={{ top: 48 }}>
+                    edit
                 </TableCell>
             </TableRow>
         </TableHead>
