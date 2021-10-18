@@ -28,7 +28,7 @@ function ConfirmButton(props: ConfirmButtonProps) {
             <Dialog open={open} onClose={() => setOpen(false)}>
                 <DialogContent><Typography>{confirmText}</Typography></DialogContent>
                 <DialogActions>
-                    <Button onClick={handleConfirm}>Confirm</Button>
+                    <Button onClick={handleConfirm} autoFocus={true}>Confirm</Button>
                 </DialogActions>
             </Dialog>
         </>
