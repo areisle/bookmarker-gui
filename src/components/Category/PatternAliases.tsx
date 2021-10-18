@@ -58,7 +58,7 @@ function PatternAliases(props: PatternAliasesProps) {
     return (
         <Stack spacing={1}>
             <Typography variant='h3'>Rules for default url aliases</Typography>
-            <Alert severity='info' sx={{ fontSize: 'small', '& MuiTypography-root, & .MuiTableCell-root': { fontSize: 'inherit' }, maxWidth: 800 }}>
+            <Alert severity='info' sx={{ fontSize: 'small', '& .MuiTypography-root, & .MuiTableCell-root': { fontSize: 'inherit' }, maxWidth: 800 }}>
                 <Typography>
                     These are similar to bookmark aliases but decide a pattern vs. being set for a particular existing bookmark.
                     They're are useful for when you want many links to point to the same bookmark and the links all follow a discernable pattern.
