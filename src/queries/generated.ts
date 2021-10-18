@@ -43,6 +43,7 @@ export type Category = {
   __typename?: 'Category';
   createdAt: Scalars['Date'];
   id: Scalars['Int'];
+  isAdmin: Scalars['Boolean'];
   modifiedAt: Scalars['Date'];
   name: Scalars['String'];
   rules: Array<CategoryPatternAlias>;
@@ -322,7 +323,7 @@ export type GetCategoryVariables = Exact<{
 }>;
 
 
-export type GetCategory = { __typename?: 'Query', category?: { __typename?: 'Category', name: string, rules: Array<{ __typename?: 'CategoryPatternAlias', match: string, canonical: string, origin: string }>, users: Array<{ __typename?: 'UserCategory', id: number, active: boolean, admin: boolean, user: { __typename?: 'User', email: string } }> } | null | undefined };
+export type GetCategory = { __typename?: 'Query', category?: { __typename?: 'Category', name: string, isAdmin: boolean, rules: Array<{ __typename?: 'CategoryPatternAlias', id: number, match: string, canonical: string, origin: string }>, users: Array<{ __typename?: 'UserCategory', id: number, active: boolean, admin: boolean, user: { __typename?: 'User', email: string } }> } | null | undefined };
 
 export type AddCategoryVariables = Exact<{
   name: Scalars['String'];
@@ -579,6 +580,7 @@ export const GetCategoryDocument = `
   category(id: $id) {
     name
     rules {
+      id
       match
       canonical
       origin
@@ -591,6 +593,7 @@ export const GetCategoryDocument = `
         email
       }
     }
+    isAdmin
   }
 }
     `;

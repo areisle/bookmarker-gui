@@ -1,11 +1,10 @@
 import { Typography, Stack } from '@mui/material';
-import React, { ReactNode } from 'react';
+import React from 'react';
 import { useQueryClient } from 'react-query';
-import { useLeaveCategory, useUsers, useGetCategory } from '../../queries';
+import { useLeaveCategory, useGetCategory } from '../../queries';
 import { ConfirmButton } from '../ConfirmButton';
-import { EditableTable } from '../EditableTable';
-import { AddUser } from './AddUser';
-import { EditUser } from './EditUser';
+import { PatternAliases } from './PatternAliases';
+import { Users } from './Users';
 
 
 interface CategorySettingsProps {
@@ -34,29 +33,22 @@ function CategorySettings(props: CategorySettingsProps) {
     }
 
     const isOnlyUser = category?.users?.length === 1;
+    const isAdmin = Boolean(category?.isAdmin);
 
     return (
-        <Stack spacing={1.5} alignItems='start'>
-            <Typography variant='h3'>Users</Typography>
-            <EditableTable
-                rows={category?.users}
-                columns={[
-                    { field: 'email', Renderer: ({ row }) => <>{row.user.email}</> },
-                    { field: 'active', Renderer: ({ row }) => <>{row.active ? 'active' : 'invited'}</> },
-                    { field: 'admin', Renderer: ({ row }) => <>{row.active ? 'admin' : ''}</> },
-                ]}
+        <Stack spacing={2} alignItems='start'>
+            <Users
+                users={category?.users}
                 isLoading={isLoading}
-                isEditable={true}
-                editor={({ row, open, onClose }) => (
-                    <EditUser
-                        id={row?.id}
-                        open={open}
-                        onClose={onClose}
-                        categoryId={id}
-                    />
-                )}
+                categoryId={id}
+                isAdmin={isAdmin}
             />
-            <AddUser categoryId={id} />
+            <PatternAliases
+                categoryId={id}
+                rules={category?.rules}
+                isLoading={isLoading}
+                isAdmin={isAdmin}
+            />
             <ConfirmButton
                 confirmText={`Confirm ${isOnlyUser ? 'delete' : 'leave'} category?`}
                 onClick={() => leaveCategory({ id })}

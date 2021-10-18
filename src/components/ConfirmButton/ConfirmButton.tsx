@@ -1,12 +1,13 @@
-import { Button, ButtonProps, Dialog, DialogActions, DialogContent, Typography } from '@mui/material';
+import { Button, ButtonProps, Dialog, DialogActions, DialogContent, IconButton, Typography } from '@mui/material';
 import React, { useState } from 'react';
 
 interface ConfirmButtonProps extends ButtonProps {
     confirmText: string;
+    icon?: boolean;
 }
 
 function ConfirmButton(props: ConfirmButtonProps) {
-    const { confirmText, children, onClick, ...rest } = props;
+    const { confirmText, children, onClick, icon, ...rest } = props;
     const [open, setOpen] = useState(false);
 
     const handleConfirm = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -14,14 +15,16 @@ function ConfirmButton(props: ConfirmButtonProps) {
         setOpen(false);
     }
 
+    const ButtonComponent: typeof Button = icon ? IconButton : Button
+
     return (
         <>
-            <Button
+            <ButtonComponent
                 {...rest}
                 onClick={() => setOpen(true)}
             >
                 {children}
-            </Button>
+            </ButtonComponent>
             <Dialog open={open} onClose={() => setOpen(false)}>
                 <DialogContent><Typography>{confirmText}</Typography></DialogContent>
                 <DialogActions>

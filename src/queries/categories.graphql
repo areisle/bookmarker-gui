@@ -9,6 +9,7 @@ query getCategory($id: Int!) {
     category(id: $id) {
         name
         rules {
+            id
             match
             canonical
             origin
@@ -21,6 +22,7 @@ query getCategory($id: Int!) {
                 email
             }
         }
+        isAdmin
     }
 }
 
