@@ -3,6 +3,7 @@ import { Box } from '@mui/system';
 import React, { ReactNode, useLayoutEffect, useMemo, useState } from 'react';
 import { useAddTag, useBookmarks, useRemoveTag } from '../../queries';
 import { BookmarkEditorDialogButton } from '../BookmarkEditor';
+import { RelativeDate } from '../RelativeDate';
 import { TagsFilter } from '../TagsFilter';
 import { Header } from './Header';
 import { Tags } from './Tags';
@@ -124,7 +125,7 @@ function BookmarksList(props: BookmarksListProps) {
                             <TableCell>
                                 {row.aliases.length || null}
                             </TableCell>
-                            <TableCell>{row.createdAt}</TableCell>
+                            <TableCell><RelativeDate>{row.createdAt}</RelativeDate></TableCell>
                             <TableCell>{row.description}</TableCell>
                             <TableCell>
                                 <Tags
