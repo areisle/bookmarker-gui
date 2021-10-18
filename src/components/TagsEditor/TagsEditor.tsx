@@ -17,6 +17,8 @@ interface TagsEditorProps {
     onChange: (next: Tag[]) => void;
 }
 
+const defaultTags: Tag[] = [];
+
 /**
  * should allow user to add tags to include as well as
  * tags to exclude.
@@ -52,7 +54,9 @@ function TagsEditor(props: TagsEditorProps) {
             autoComplete
             disableClearable={true}
             filterSelectedOptions={true}
-            onInputChange={(_, nextInputText) => setInputText(nextInputText.toLowerCase())}
+            onInputChange={(_, nextInputText) => {
+                setInputText(nextInputText.toLowerCase())
+            }}
             onChange={(_, next, reason, details) => {
                 if (reason === 'removeOption' && !details?.option.createdByCurrentUser) {
                     // cannot be deleted
@@ -65,15 +69,16 @@ function TagsEditor(props: TagsEditorProps) {
                 }
                 onChange(next as Tag[]);
             }}
+            inputValue={inputText}
             autoHighlight
             loading={isLoadingOptions}
             isOptionEqualToValue={(option, value) => option.name === value.name}
             getOptionLabel={(option) => option.name}
-            options={tags ?? []}
+            options={tags ?? defaultTags}
             fullWidth={true}
             multiple={true}
             freeSolo={true}
-            value={ungroupedValue ?? []}
+            value={ungroupedValue ?? defaultTags}
             renderInput={(params) => (
                 <TextField
                     {...params}
