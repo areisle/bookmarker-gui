@@ -29,13 +29,13 @@ function Users(props: UsersProps) {
 
     const { mutate: addUsers, isLoading: isAdding, error: errorAdding } = useAddUsers({
         onSuccess: () => {
-            queryClient.invalidateQueries('users');
+            queryClient.invalidateQueries('getCategory');
         }
     });
 
     const { mutate: deleteUser, isLoading: isDeleting, error: errorDeleting } = useRemoveUser({
         onSuccess: () => {
-            queryClient.invalidateQueries('users');
+            queryClient.invalidateQueries('getCategory');
         }
     });
 

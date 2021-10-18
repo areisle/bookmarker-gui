@@ -1,13 +1,14 @@
 import { Typography, Stack, Table, TableBody, TableCell, TableRow, Alert } from '@mui/material';
 import React from 'react';
 import { useQueryClient } from 'react-query';
-import { GetCategory } from '../../queries';
+import { GetCategory, useAddCategoryPatternAlias, useRemoveCategoryPatternAlias, useUpdateCategoryPatternAlias } from '../../queries';
 import { EditableTable } from '../EditableTable';
 
+type Alias = NonNullable<GetCategory['category']>['rules'][number]
 
 interface PatternAliasesProps {
     categoryId: number;
-    rules: NonNullable<GetCategory['category']>['rules'] | undefined;
+    rules: Alias[] | undefined;
     isLoading: boolean;
     isAdmin?: boolean;
 }
@@ -16,6 +17,43 @@ function PatternAliases(props: PatternAliasesProps) {
     const { categoryId, rules, isLoading, isAdmin } = props;
 
     const queryClient = useQueryClient();
+
+    const { mutate: addAlias, isLoading: isAdding, error: errorAdding } = useAddCategoryPatternAlias(
+        { onSuccess: () => queryClient.invalidateQueries('getCategory') }
+    )
+
+    const handleAdd = (next: Partial<Alias>) => {
+        const { origin, match, canonical } = next;
+        if (!origin || !match || !canonical) { return; }
+        addAlias({
+            categoryId,
+            input: {
+                origin,
+                match,
+                canonical,
+            }
+        })
+    }
+
+    const { mutate: removeAlias, isLoading: isRemoving, error: errorRemoving } = useRemoveCategoryPatternAlias(
+        { onSuccess: () => queryClient.invalidateQueries('getCategory') }
+    )
+
+    const { mutate: updateAlias, isLoading: isUpdating, error: errorUpdating } = useUpdateCategoryPatternAlias(
+        { onSuccess: () => queryClient.invalidateQueries('getCategory') }
+    )
+
+    const handleUpdate = (next: Alias) => {
+        const { origin, match, canonical } = next;
+        updateAlias({
+            id: next.id,
+            input: {
+                origin,
+                match,
+                canonical,
+            }
+        })
+    }
 
     return (
         <Stack spacing={1}>
@@ -47,6 +85,15 @@ function PatternAliases(props: PatternAliasesProps) {
                     </TableBody>
                 </Table>
             </Alert>
+            {errorAdding && (
+                <Typography color='error'>{errorAdding.message}</Typography>
+            )}
+            {errorRemoving && (
+                <Typography color='error'>{errorRemoving.message}</Typography>
+            )}
+            {errorUpdating && (
+                <Typography color='error'>{errorUpdating.message}</Typography>
+            )}
             <EditableTable
                 rows={rules}
                 columns={[
@@ -55,7 +102,12 @@ function PatternAliases(props: PatternAliasesProps) {
                     { field: 'canonical', isEditable: true },
                 ]}
                 isLoading={isLoading}
+                onAdd={handleAdd}
+                onSave={handleUpdate}
+                onDelete={(alias) => removeAlias({ id: alias.id })}
+                isSaving={isAdding || isUpdating}
                 isDeletable={isAdmin}
+                isDeleting={isRemoving}
                 isCreatable={isAdmin}
                 isEditable={isAdmin}
                 addButtonLabel='Add new pattern'

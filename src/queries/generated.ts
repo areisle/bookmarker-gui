@@ -70,20 +70,29 @@ export type CreateBookmarkContent = {
   url: Scalars['String'];
 };
 
+export type CreateCategoryAliasContent = {
+  canonical: Scalars['String'];
+  match: Scalars['String'];
+  origin: Scalars['String'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   addBookmark?: Maybe<Bookmark>;
   addCategory?: Maybe<Category>;
+  addCategoryPatternAlias?: Maybe<Scalars['Void']>;
   addTag?: Maybe<Scalars['Void']>;
   addUsers?: Maybe<Scalars['Void']>;
   batchUpdateHostName?: Maybe<Scalars['Void']>;
   leaveCategory?: Maybe<Scalars['Void']>;
   login: Scalars['String'];
   removeBookmark?: Maybe<Scalars['Void']>;
+  removeCategoryPatternAlias?: Maybe<Scalars['Void']>;
   removeTag?: Maybe<Scalars['Void']>;
   removeUser?: Maybe<Scalars['Void']>;
   updateBookmark?: Maybe<Scalars['Void']>;
   updateCategory?: Maybe<Scalars['Void']>;
+  updateCategoryPatternAlias?: Maybe<Scalars['Void']>;
 };
 
 
@@ -94,6 +103,12 @@ export type MutationAddBookmarkArgs = {
 
 export type MutationAddCategoryArgs = {
   name: Scalars['String'];
+};
+
+
+export type MutationAddCategoryPatternAliasArgs = {
+  categoryId: Scalars['Int'];
+  input: CreateCategoryAliasContent;
 };
 
 
@@ -132,6 +147,11 @@ export type MutationRemoveBookmarkArgs = {
 };
 
 
+export type MutationRemoveCategoryPatternAliasArgs = {
+  id: Scalars['Int'];
+};
+
+
 export type MutationRemoveTagArgs = {
   bookmarkId: Scalars['Int'];
   name: Scalars['String'];
@@ -153,6 +173,12 @@ export type MutationUpdateBookmarkArgs = {
 export type MutationUpdateCategoryArgs = {
   id: Scalars['Int'];
   input?: Maybe<UpdateCategoryContent>;
+};
+
+
+export type MutationUpdateCategoryPatternAliasArgs = {
+  id: Scalars['Int'];
+  input: UpdateCategoryAliasContent;
 };
 
 export type Query = {
@@ -235,6 +261,12 @@ export type UpdateBookmarkContent = {
   tags?: Maybe<Array<Scalars['String']>>;
   title?: Maybe<Scalars['String']>;
   url?: Maybe<Scalars['String']>;
+};
+
+export type UpdateCategoryAliasContent = {
+  canonical?: Maybe<Scalars['String']>;
+  match?: Maybe<Scalars['String']>;
+  origin?: Maybe<Scalars['String']>;
 };
 
 export type UpdateCategoryContent = {
@@ -338,6 +370,29 @@ export type LeaveCategoryVariables = Exact<{
 
 
 export type LeaveCategory = { __typename?: 'Mutation', leaveCategory?: any | null | undefined };
+
+export type AddCategoryPatternAliasVariables = Exact<{
+  categoryId: Scalars['Int'];
+  input: CreateCategoryAliasContent;
+}>;
+
+
+export type AddCategoryPatternAlias = { __typename?: 'Mutation', addCategoryPatternAlias?: any | null | undefined };
+
+export type RemoveCategoryPatternAliasVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type RemoveCategoryPatternAlias = { __typename?: 'Mutation', removeCategoryPatternAlias?: any | null | undefined };
+
+export type UpdateCategoryPatternAliasVariables = Exact<{
+  id: Scalars['Int'];
+  input: UpdateCategoryAliasContent;
+}>;
+
+
+export type UpdateCategoryPatternAlias = { __typename?: 'Mutation', updateCategoryPatternAlias?: any | null | undefined };
 
 export type TagsVariables = Exact<{
   categoryId: Scalars['Int'];
@@ -638,6 +693,45 @@ export const useLeaveCategory = <
     >(options?: UseMutationOptions<LeaveCategory, TError, LeaveCategoryVariables, TContext>) => 
     useMutation<LeaveCategory, TError, LeaveCategoryVariables, TContext>(
       (variables?: LeaveCategoryVariables) => fetchData<LeaveCategory, LeaveCategoryVariables>(LeaveCategoryDocument, variables)(),
+      options
+    );
+export const AddCategoryPatternAliasDocument = `
+    mutation addCategoryPatternAlias($categoryId: Int!, $input: CreateCategoryAliasContent!) {
+  addCategoryPatternAlias(categoryId: $categoryId, input: $input)
+}
+    `;
+export const useAddCategoryPatternAlias = <
+      TError = Error,
+      TContext = unknown
+    >(options?: UseMutationOptions<AddCategoryPatternAlias, TError, AddCategoryPatternAliasVariables, TContext>) => 
+    useMutation<AddCategoryPatternAlias, TError, AddCategoryPatternAliasVariables, TContext>(
+      (variables?: AddCategoryPatternAliasVariables) => fetchData<AddCategoryPatternAlias, AddCategoryPatternAliasVariables>(AddCategoryPatternAliasDocument, variables)(),
+      options
+    );
+export const RemoveCategoryPatternAliasDocument = `
+    mutation removeCategoryPatternAlias($id: Int!) {
+  removeCategoryPatternAlias(id: $id)
+}
+    `;
+export const useRemoveCategoryPatternAlias = <
+      TError = Error,
+      TContext = unknown
+    >(options?: UseMutationOptions<RemoveCategoryPatternAlias, TError, RemoveCategoryPatternAliasVariables, TContext>) => 
+    useMutation<RemoveCategoryPatternAlias, TError, RemoveCategoryPatternAliasVariables, TContext>(
+      (variables?: RemoveCategoryPatternAliasVariables) => fetchData<RemoveCategoryPatternAlias, RemoveCategoryPatternAliasVariables>(RemoveCategoryPatternAliasDocument, variables)(),
+      options
+    );
+export const UpdateCategoryPatternAliasDocument = `
+    mutation updateCategoryPatternAlias($id: Int!, $input: UpdateCategoryAliasContent!) {
+  updateCategoryPatternAlias(id: $id, input: $input)
+}
+    `;
+export const useUpdateCategoryPatternAlias = <
+      TError = Error,
+      TContext = unknown
+    >(options?: UseMutationOptions<UpdateCategoryPatternAlias, TError, UpdateCategoryPatternAliasVariables, TContext>) => 
+    useMutation<UpdateCategoryPatternAlias, TError, UpdateCategoryPatternAliasVariables, TContext>(
+      (variables?: UpdateCategoryPatternAliasVariables) => fetchData<UpdateCategoryPatternAlias, UpdateCategoryPatternAliasVariables>(UpdateCategoryPatternAliasDocument, variables)(),
       options
     );
 export const TagsDocument = `

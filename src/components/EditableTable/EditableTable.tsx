@@ -82,6 +82,7 @@ function EditableTable<R extends Row>(props: EditableTableProps<R>) {
         isCreatable,
         onDelete,
         onSave,
+        onAdd,
         addButtonLabel = 'Add Row'
     } = props;
 
@@ -188,7 +189,7 @@ function EditableTable<R extends Row>(props: EditableTableProps<R>) {
                                         {(isEditingRow || isCreatingRow) && (
                                             <Box display='inline-flex' gap={0.5}>
                                                 <Button
-                                                    onClick={() => onSave?.(rowForEditing!)}
+                                                    onClick={() => (isCreatingRow ? onAdd : onSave)?.(rowForEditing!)}
                                                     size='small'
                                                 >
                                                     {isCreatingRow ? 'Add' : 'Save'}

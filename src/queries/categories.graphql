@@ -36,3 +36,21 @@ mutation addCategory($name: String!) {
 mutation leaveCategory($id: Int!) {
     leaveCategory(id: $id)
 }
+
+mutation addCategoryPatternAlias(
+    $categoryId: Int!
+    $input: CreateCategoryAliasContent!
+) {
+    addCategoryPatternAlias(categoryId: $categoryId, input: $input)
+}
+
+mutation removeCategoryPatternAlias($id: Int!) {
+    removeCategoryPatternAlias(id: $id)
+}
+
+mutation updateCategoryPatternAlias(
+    $id: Int!
+    $input: UpdateCategoryAliasContent!
+) {
+    updateCategoryPatternAlias(id: $id, input: $input)
+}
