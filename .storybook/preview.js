@@ -1,6 +1,7 @@
 import { CustomThemeProvider } from '../src/theme';
 import { QueryProvider, AuthProvider } from '../src/queries';
 import { MINIMAL_VIEWPORTS } from '@storybook/addon-viewport';
+import { PageMetaContext } from '../src/queries/ActiveTabProvider';
 
 const customViewports = {
     popup: {
@@ -32,12 +33,14 @@ export const parameters = {
 };
 
 export const decorators = [
-    (Story) => (
+    (Story, context) => (
         <CustomThemeProvider>
             <QueryProvider>
-                <AuthProvider>
-                    <Story />
-                </AuthProvider>
+                <PageMetaContext.Provider value={context.parameters.pageMeta}>
+                    <AuthProvider>
+                        <Story />
+                    </AuthProvider>
+                </PageMetaContext.Provider>
             </QueryProvider>
         </CustomThemeProvider>
     ),

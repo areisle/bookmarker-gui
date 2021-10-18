@@ -1,13 +1,12 @@
 import React, { useMemo } from 'react';
-import { useQuery } from 'react-query';
 import { BookmarksForUrl, useBookmarksForUrl } from '../../queries';
-import { getCurrentTab } from '../../queries/chrome';
+import { usePageMeta } from '../../queries/ActiveTabProvider';
 
 type Bookmark = BookmarksForUrl['bookmarksForUrl'][number];
 
 
 const useBookmark = (categoryId: number | null, setCategoryId: (categoryId: number) => void) => {
-    const { data: tab } = useQuery('current-tab', getCurrentTab);
+    const tab = usePageMeta();
 
     const { data: bookmarks, isLoading, error, refetch } = useBookmarksForUrl(
         { url: tab?.url! },
@@ -27,8 +26,8 @@ const useBookmark = (categoryId: number | null, setCategoryId: (categoryId: numb
 
     const bookmark = useMemo(() => {
         const next: Partial<Bookmark> = {
-            url: tab?.url!,
-            title: tab?.title!,
+            url: tab?.url ?? '',
+            title: tab?.title ?? '',
             category: categoryId ? { id: categoryId } : undefined,
         }
 

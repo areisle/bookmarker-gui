@@ -5,6 +5,18 @@ import { PopupPage } from './PopupPage';
 export default {
     component: PopupPage,
     title: 'pages/PopupPage',
+    parameters: {
+        viewport: {
+            defaultViewport: 'popup'
+        }
+    }
 } as Meta;
 
-export const Example: Story = {}
+export const WithoutBookmark: Story = {
+    parameters: {
+        pageMeta: {
+            title: 'Recipe Dessert Thing',
+            url: 'https://some-random-link.com/recipe-dessert-thing'
+        }
+    }
+}
