@@ -16,7 +16,7 @@ interface UsersProps {
 type User = NonNullable<GetCategory['category']>['users'][number];
 
 const columns: ColumnDef<User>[] = [
-    { field: 'email', valueGetter: (row) => row.user?.email, isEditable: (row) => !row.id },
+    { field: 'email', valueGetter: (row) => row.user?.email, isEditable: (row) => !row.id, valueSetter: (row, value) => ({ ...row, user: { email: value as string } }) },
     { field: 'active', Renderer: ({ value }) => <>{value ? 'active' : 'invited'}</> },
     { field: 'admin', Renderer: ({ value }) => <>{value ? 'admin' : ''}</>, Editor: BooleanEditor, isEditable: (row) => Boolean(row.id) },
 ];
