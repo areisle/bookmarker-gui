@@ -1,4 +1,6 @@
-import { getToken } from "./auth";
+import { getToken, removeToken } from "./auth";
+
+class AuthenticationError extends Error {}
 
 export const fetchData = <TData, TVariables>(
     query: string,
@@ -21,10 +23,16 @@ export const fetchData = <TData, TVariables>(
         const json = await res.json();
 
         if (json.errors) {
-            const { message } = json.errors[0] || "Error..";
+            const { message, extensions } = json.errors[0] || "Error..";
+            if (extensions?.code === "UNAUTHENTICATED") {
+                await removeToken();
+                throw new AuthenticationError(message);
+            }
             throw new Error(message);
         }
 
         return json.data;
     };
 };
+
+export { AuthenticationError };

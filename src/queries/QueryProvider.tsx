@@ -1,7 +1,18 @@
 import React, { ReactNode } from "react"
 import { QueryClient, QueryClientProvider } from "react-query"
+import { AuthenticationError } from "./fetcher"
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+    defaultOptions: {
+        queries: {
+            onError: (e) => {
+                if (e instanceof AuthenticationError) {
+                    queryClient.invalidateQueries('isAuthenticated')
+                }
+            }
+        }
+    }
+})
 
 function QueryProvider({ children }: { children: ReactNode }) {
     return (
@@ -11,4 +22,4 @@ function QueryProvider({ children }: { children: ReactNode }) {
     )
 }
 
-export { QueryProvider }
+export { QueryProvider, queryClient }
