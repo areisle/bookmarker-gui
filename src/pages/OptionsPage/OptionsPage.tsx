@@ -1,8 +1,8 @@
 import React, { ReactNode, useState, useLayoutEffect } from 'react';
-import { ListItem, ListItemText, MenuItem, MenuList, Tab, Tabs, Typography } from '@mui/material';
+import { Button, ListItem, ListItemText, MenuItem, MenuList, Tab, Tabs, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { CategorySettings } from '../../components/CategorySettings';
-import { useCategories } from '../../queries';
+import { useAuth, useCategories } from '../../queries';
 import { AddCategory } from './AddCategory';
 import { TabPanel, tabProps } from '../../components/TabPanel';
 import { BookmarksList } from '../../components/BookmarksList';
@@ -12,6 +12,7 @@ function OptionsPage() {
 
     const [id, setId] = useState<number | null>(null);
     const [tab, setTab] = useState(0);
+    const { logout } = useAuth();
 
     useLayoutEffect(() => {
         if (!id && data?.categories.length) {
@@ -78,6 +79,12 @@ function OptionsPage() {
                 >
                     <Tab label="Bookmarks" {...tabProps(0)} sx={{ bgcolor: 'background.paper' }} />
                     <Tab label="Settings" {...tabProps(1)} sx={{ bgcolor: 'background.paper' }} />
+                    <Box
+                        sx={{ alignSelf: 'center', marginInlineStart: 'auto' }}
+                        pr={1}
+                    >
+                        <Button onClick={logout}>logout</Button>
+                    </Box>
                 </Tabs>
                 {content}
             </Box>
