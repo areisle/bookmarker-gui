@@ -1,7 +1,7 @@
-import { Box, Stack, Typography } from '@mui/material';
+import { Box, Button, Stack, Typography } from '@mui/material';
 import React from 'react';
 import { BookmarkEditor, CategorySelect } from '../../components';
-import { useAddBookmark, useRemoveBookmark, useUpdateBookmark } from '../../queries';
+import { useAddBookmark, useAuth, useRemoveBookmark, useUpdateBookmark } from '../../queries';
 import { useBookmark } from './useSelectedBookmark';
 import { useSelectedCategory } from './useSelectedCategory';
 
@@ -43,17 +43,35 @@ function PopupPage() {
         isLoading: isUpdating
     } = useUpdateBookmark({ onSuccess: () => refetch() });
 
-    if (errorLoadingBookmark) {
-        return (
-            <Typography color='error'>
-                Unable to load bookmarks for url. {errorLoadingBookmark.message}
-            </Typography>
-        )
-    }
+    const { logout } = useAuth();
 
     return (
         <Box sx={{ minWidth: '300px', minHeight: '200px' }}>
             <Stack spacing={1.5}>
+                <Box
+                    display='flex'
+                    sx={{ alignItems: 'baseline', justifyContent: 'flex-end', gap: 2 }}
+                >
+                    <Button
+                        variant='text'
+                        sx={{ padding: 0 }}
+                        onClick={() => chrome?.runtime?.openOptionsPage()}
+                    >
+                        see all bookmarks
+                    </Button>
+                    <Button
+                        variant='text'
+                        sx={{ padding: 0 }}
+                        onClick={logout}
+                    >
+                        Logout
+                    </Button>
+                </Box>
+                {errorLoadingBookmark && (
+                    <Typography color='error'>
+                        Unable to load bookmarks for url. {errorLoadingBookmark.message}
+                    </Typography>
+                )}
                 <CategorySelect
                     value={categoryId}
                     onChange={(value) => setCategoryId(value)}

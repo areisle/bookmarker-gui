@@ -1,51 +1,96 @@
-import React, { createContext, ReactNode, useContext, useState } from "react";
-import { useMutation, useQuery } from "react-query";
-import { Typography, Button, TextField, CircularProgress } from "@mui/material";
-import { Box } from "@mui/system";
+import { Box, Button, CircularProgress, TextField, Typography } from "@mui/material";
+import React, { createContext, ReactNode, useCallback, useContext, useState } from "react";
+import { QueryClient, QueryClientProvider, useMutation, useQuery } from "react-query";
 import { getToken, removeToken, setToken, USE_AUTH } from "./auth";
+
+class AuthenticationError extends Error { }
+
+const queryClient = new QueryClient({
+    defaultOptions: {
+        queries: {
+            // don't retry on authentication error
+            retry: (count, e) => e instanceof AuthenticationError ? false : count < 3,
+        },
+    }
+})
 
 interface AuthContextState {
     token: string;
+    logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextState | undefined>(undefined);
 
-interface AuthProviderProps {
-    children: ReactNode;
-    isPopup?: boolean;
-}
+function AuthProvider(props: { children: ReactNode }) {
+    const { children } = props;
 
-const AuthProvider = (props: AuthProviderProps) => {
-    const { children, isPopup } = props;
-
-    const { data: token, refetch } = useQuery<string, Error>('isAuthenticated', getToken, {
+    const { data: token = '', refetch } = useQuery<string, Error>('isAuthenticated', getToken, {
         enabled: USE_AUTH,
     })
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const { mutate: login, isLoading, error } = useMutation<string, Error>(
-        async () => authenticate(email, password),
+    const {
+        mutate: login,
+        isLoading: isLoggingIn,
+        error: errorLoggingIn,
+    } = useMutation<string, Error>(
+        async () => {
+            // remove old token
+            await removeToken()
+
+            const response = await fetch(process.env.API_URL!, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    query: `
+                    mutation login($email: String!, $password: String!) {
+                        login(email: $email, password: $password)
+                    }
+                    `,
+                    variables: { email, password },
+                }),
+            });
+
+            const body = await response.json();
+
+            if (!response.ok) {
+                throw new Error(`Authentication Failed. ${body.message}`);
+            }
+
+            if (body.errors) {
+                throw new Error(`${body.errors[0]?.message ?? 'An error occurred.'}`);
+            }
+
+            const token = body.data.login
+            await setToken(token ?? '')
+
+            return token;
+        },
         { onSuccess: () => refetch() }
     );
 
-    const handleLogin = () => {
-        login();
-    }
+    const { mutate: logout, isLoading: isLoggingOut, error: errorLoadingOut } = useMutation<unknown, Error>(
+        async () => removeToken(),
+        { onSuccess: () => refetch() }
+    );
 
-    if (!token && isPopup && USE_AUTH) {
-        return (
-            <Button
-                onClick={() => chrome?.runtime.openOptionsPage()}
-                endIcon={isLoading && <CircularProgress size={20} />}
-            >
-                Login
-            </Button>
-        )
-    }
+    const handleLogin = useCallback(() => {
+        if (!isLoggingOut || !isLoggingIn) {
+            login();
+        }
+    }, [login, isLoggingOut, isLoggingIn])
 
-    if (!token && USE_AUTH) {
+    const handleLogout = useCallback(() => {
+        if (!isLoggingOut || !isLoggingIn) {
+            logout();
+        }
+    }, [logout, isLoggingOut, isLoggingIn]);
+
+    if ((isLoggingIn || !token || errorLoggingIn) && USE_AUTH) {
         return (
             <Box
                 sx={{
@@ -68,69 +113,82 @@ const AuthProvider = (props: AuthProviderProps) => {
                     onChange={(e) => setPassword(e.target.value)}
                     value={password}
                 />
-                {error && <Typography color='error' sx={{ marginTop: 1 }}>{error.message}</Typography>}
+                {errorLoggingIn && <Typography color='error' sx={{ marginTop: 1 }}>{errorLoggingIn.message}</Typography>}
                 <Button
                     onClick={handleLogin}
-                    endIcon={isLoading && <CircularProgress size={20} />}
+                    endIcon={isLoggingIn && <CircularProgress size={20} />}
                     sx={{ marginTop: 1 }}
                 >
                     Login
                 </Button>
             </Box>
         )
-
     }
 
     return (
-        <AuthContext.Provider value={{ token: token! }}>
+        <AuthContext.Provider value={{ token, logout: handleLogout }}>
             {children}
         </AuthContext.Provider>
     )
 }
 
+const AuthenticatedQueryProvider = (props: { children: ReactNode }) => {
+    const { children } = props;
+
+    return (
+        <QueryClientProvider client={queryClient}>
+            <AuthProvider>
+                {children}
+            </AuthProvider>
+        </QueryClientProvider>
+    )
+}
+
 const useAuth = () => {
     const auth = useContext(AuthContext);
+
     if (!auth) {
-        throw new Error('No AuthProvider found.')
+        throw new Error('No Auth Provider found.')
     }
 
     return auth;
 }
 
-const authenticate = async (email: string, password: string) => {
-    // remove old token
-    await removeToken()
+const useAuthenticatedFetcher = <TData, TVariables>(query: string): (() => Promise<TData>) => {
+    const auth = useAuth();
 
-    const response = await fetch(process.env.API_URL!, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            query: `
-            mutation login($email: String!, $password: String!) {
-                login(email: $email, password: $password)
+    return async (variables?: TVariables) => {
+        console.log("token is", auth.token);
+        const res = await fetch(process.env.API_URL!, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: auth.token,
+            },
+            body: JSON.stringify({
+                query,
+                variables,
+            }),
+        });
+
+        const json = await res.json();
+
+        if (json.errors) {
+            const { message, extensions } = json.errors[0] || "Error..";
+            if (extensions?.code === "UNAUTHENTICATED") {
+                console.log("unauthenticated error, removing token");
+                auth.logout()
+                throw new AuthenticationError(message);
             }
-            `,
-            variables: { email, password },
-        }),
-    });
+            throw new Error(message);
+        }
 
-    const body = await response.json();
+        return json.data;
+    };
+}
 
-    if (!response.ok) {
-        throw new Error(`Authentication Failed. ${body.message}`);
-    }
-
-    if (body.errors) {
-        throw new Error(`${body.errors[0]?.message ?? 'An error occurred.'}`);
-    }
-
-    const token = body.data.login
-    await setToken(token ?? '')
-
-    return token;
-};
-
-
-export { useAuth, AuthProvider };
+export {
+    AuthenticatedQueryProvider,
+    useAuthenticatedFetcher,
+    useAuth,
+}

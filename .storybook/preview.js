@@ -1,5 +1,5 @@
 import { CustomThemeProvider } from '../src/theme';
-import { QueryProvider, AuthProvider } from '../src/queries';
+import { AuthenticatedQueryProvider } from '../src/queries';
 import { MINIMAL_VIEWPORTS } from '@storybook/addon-viewport';
 import { PageMetaContext } from '../src/queries/ActiveTabProvider';
 
@@ -35,13 +35,11 @@ export const parameters = {
 export const decorators = [
     (Story, context) => (
         <CustomThemeProvider>
-            <QueryProvider>
+            <AuthenticatedQueryProvider>
                 <PageMetaContext.Provider value={context.parameters.pageMeta}>
-                    <AuthProvider>
-                        <Story />
-                    </AuthProvider>
+                    <Story />
                 </PageMetaContext.Provider>
-            </QueryProvider>
+            </AuthenticatedQueryProvider>
         </CustomThemeProvider>
     ),
 ];

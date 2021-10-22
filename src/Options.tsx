@@ -1,18 +1,16 @@
 import React from "react"
 import ReactDom from "react-dom"
 import { OptionsPage } from "./pages/OptionsPage"
-import { AuthProvider, QueryProvider } from "./queries"
+import { AuthenticatedQueryProvider } from "./queries"
 import { CustomThemeProvider } from "./theme"
 
 function Options() {
     return (
         <span>
             <CustomThemeProvider>
-                <QueryProvider>
-                    <AuthProvider>
-                        <OptionsPage />
-                    </AuthProvider>
-                </QueryProvider>
+                <AuthenticatedQueryProvider>
+                    <OptionsPage />
+                </AuthenticatedQueryProvider>
             </CustomThemeProvider>
         </span>
     )
