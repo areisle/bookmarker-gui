@@ -13,7 +13,7 @@ function CategorySelect(props: CategorySelectProps) {
     const { value, onChange, bookmarkedCategories } = props;
 
     const { data, isLoading, error } = useCategories(
-        {},
+        { activeOnly: true },
         { select: (response) => response.categories, keepPreviousData: true }
     );
 
