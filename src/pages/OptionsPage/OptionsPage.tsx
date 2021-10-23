@@ -2,7 +2,7 @@ import React, { ReactNode, useState, useLayoutEffect } from 'react';
 import { Button, ListItem, ListItemText, MenuItem, MenuList, Tab, Tabs, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { CategorySettings } from '../../components/CategorySettings';
-import { useAuth, useCategories } from '../../queries';
+import { useAuth, useCategories, useGetCategory, useJoinCategory } from '../../queries';
 import { AddCategory } from './AddCategory';
 import { TabPanel, tabProps } from '../../components/TabPanel';
 import { BookmarksList } from '../../components/BookmarksList';
@@ -11,6 +11,7 @@ function OptionsPage() {
     const { data, error, isLoading: loading } = useCategories({});
 
     const [id, setId] = useState<number | null>(null);
+
     const [tab, setTab] = useState(0);
     const { logout } = useAuth();
 
@@ -25,6 +26,19 @@ function OptionsPage() {
         }
     }, [data, id]);
 
+    const { data: category, isLoading: isLoadingCategory, refetch } = useGetCategory(
+        { id: id! },
+        {
+            select: (response) => response.category,
+            enabled: Boolean(id)
+        }
+    )
+
+    const { mutate: joinCategory, error: errorJoining, isLoading: isJoining } = useJoinCategory(
+        { onSuccess: () => refetch() }
+    );
+
+
     let content: ReactNode;
 
     if (loading) {
@@ -38,7 +52,7 @@ function OptionsPage() {
                     <BookmarksList category={id} />
                 </TabPanel>
                 <TabPanel value={tab} index={1}>
-                    <CategorySettings id={id} />
+                    <CategorySettings id={id} category={category} isLoading={isLoadingCategory} />
                 </TabPanel>
             </>
         )
@@ -80,10 +94,22 @@ function OptionsPage() {
                     <Tab label="Bookmarks" {...tabProps(0)} sx={{ bgcolor: 'background.paper' }} />
                     <Tab label="Settings" {...tabProps(1)} sx={{ bgcolor: 'background.paper' }} />
                     <Box
-                        sx={{ alignSelf: 'center', marginInlineStart: 'auto' }}
+                        sx={{ alignSelf: 'center', marginInlineStart: 'auto', gap: 1, display: 'flex' }}
                         pr={1}
                     >
-                        <Button onClick={logout}>logout</Button>
+                        {!category?.isActive && (
+                            <Button
+                                onClick={() => joinCategory({ id: id! })}
+                            >
+                                join category
+                            </Button>
+                        )}
+                        <Button
+                            onClick={logout}
+                            variant='text'
+                        >
+                            logout
+                        </Button>
                     </Box>
                 </Tabs>
                 {content}

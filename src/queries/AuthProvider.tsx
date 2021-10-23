@@ -163,7 +163,6 @@ const useAuthenticatedFetcher = <TData, TVariables>(query: string): (() => Promi
     const auth = useAuth();
 
     return async (variables?: TVariables) => {
-        console.log("token is", auth.token);
         const res = await fetch(process.env.API_URL!, {
             method: "POST",
             headers: {
@@ -181,7 +180,6 @@ const useAuthenticatedFetcher = <TData, TVariables>(query: string): (() => Promi
         if (json.errors) {
             const { message, extensions } = json.errors[0] || "Error..";
             if (extensions?.code === "UNAUTHENTICATED") {
-                console.log("unauthenticated error, removing token");
                 auth.logout()
                 throw new AuthenticationError(message);
             }

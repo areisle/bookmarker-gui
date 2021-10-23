@@ -23,6 +23,7 @@ query getCategory($id: Int!) {
             }
         }
         isAdmin
+        isActive
     }
 }
 
@@ -31,6 +32,10 @@ mutation addCategory($name: String!) {
         id
         name
     }
+}
+
+mutation joinCategory($id: Int!) {
+    joinCategory(id: $id)
 }
 
 mutation leaveCategory($id: Int!) {

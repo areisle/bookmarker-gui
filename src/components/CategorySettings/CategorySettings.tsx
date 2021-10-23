@@ -1,7 +1,7 @@
-import { Typography, Stack } from '@mui/material';
+import { Stack } from '@mui/material';
 import React from 'react';
 import { useQueryClient } from 'react-query';
-import { useLeaveCategory, useGetCategory } from '../../queries';
+import { useLeaveCategory, GetCategory } from '../../queries';
 import { ConfirmButton } from '../ConfirmButton';
 import { PatternAliases } from './PatternAliases';
 import { Users } from './Users';
@@ -9,10 +9,12 @@ import { Users } from './Users';
 
 interface CategorySettingsProps {
     id: number;
+    category: GetCategory['category'];
+    isLoading: boolean;
 }
 
 function CategorySettings(props: CategorySettingsProps) {
-    const { id } = props;
+    const { id, category, isLoading } = props;
 
     const queryClient = useQueryClient();
 
@@ -21,16 +23,6 @@ function CategorySettings(props: CategorySettingsProps) {
             queryClient.invalidateQueries('categories')
         }
     });
-
-    const {
-        data: category,
-        isLoading,
-        error,
-    } = useGetCategory({ id }, { select: (response) => response.category })
-
-    if (error) {
-        return <Typography color='error'>Unable to load category. {error.message}</Typography>
-    }
 
     const isOnlyUser = category?.users?.length === 1;
     const isAdmin = Boolean(category?.isAdmin);

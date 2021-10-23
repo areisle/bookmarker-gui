@@ -43,6 +43,7 @@ export type Category = {
   __typename?: 'Category';
   createdAt: Scalars['Date'];
   id: Scalars['Int'];
+  isActive: Scalars['Boolean'];
   isAdmin: Scalars['Boolean'];
   modifiedAt: Scalars['Date'];
   name: Scalars['String'];
@@ -364,7 +365,7 @@ export type GetCategoryVariables = Exact<{
 }>;
 
 
-export type GetCategory = { __typename?: 'Query', category?: { __typename?: 'Category', name: string, isAdmin: boolean, rules: Array<{ __typename?: 'CategoryPatternAlias', id: number, match: string, canonical: string, origin: string }>, users: Array<{ __typename?: 'UserCategory', id: number, active: boolean, admin: boolean, user: { __typename?: 'User', email: string } }> } | null | undefined };
+export type GetCategory = { __typename?: 'Query', category?: { __typename?: 'Category', name: string, isAdmin: boolean, isActive: boolean, rules: Array<{ __typename?: 'CategoryPatternAlias', id: number, match: string, canonical: string, origin: string }>, users: Array<{ __typename?: 'UserCategory', id: number, active: boolean, admin: boolean, user: { __typename?: 'User', email: string } }> } | null | undefined };
 
 export type AddCategoryVariables = Exact<{
   name: Scalars['String'];
@@ -372,6 +373,13 @@ export type AddCategoryVariables = Exact<{
 
 
 export type AddCategory = { __typename?: 'Mutation', addCategory?: { __typename?: 'Category', id: number, name: string } | null | undefined };
+
+export type JoinCategoryVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type JoinCategory = { __typename?: 'Mutation', joinCategory?: any | null | undefined };
 
 export type LeaveCategoryVariables = Exact<{
   id: Scalars['Int'];
@@ -658,6 +666,7 @@ export const GetCategoryDocument = `
       }
     }
     isAdmin
+    isActive
   }
 }
     `;
@@ -689,6 +698,19 @@ export const useAddCategory = <
     >(options?: UseMutationOptions<AddCategory, TError, AddCategoryVariables, TContext>) => 
     useMutation<AddCategory, TError, AddCategoryVariables, TContext>(
       useAuthenticatedFetcher<AddCategory, AddCategoryVariables>(AddCategoryDocument),
+      options
+    );
+export const JoinCategoryDocument = `
+    mutation joinCategory($id: Int!) {
+  joinCategory(id: $id)
+}
+    `;
+export const useJoinCategory = <
+      TError = Error,
+      TContext = unknown
+    >(options?: UseMutationOptions<JoinCategory, TError, JoinCategoryVariables, TContext>) => 
+    useMutation<JoinCategory, TError, JoinCategoryVariables, TContext>(
+      useAuthenticatedFetcher<JoinCategory, JoinCategoryVariables>(JoinCategoryDocument),
       options
     );
 export const LeaveCategoryDocument = `
