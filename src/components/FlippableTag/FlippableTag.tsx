@@ -9,6 +9,7 @@ interface FlippableTagProps extends Omit<ChipProps, 'id'> {
     onFlip: (name: string) => void;
     createdByCurrentUser?: boolean;
     hide?: boolean;
+    isEditable: boolean;
 }
 
 function FlippableTag(props: FlippableTagProps) {
@@ -18,6 +19,7 @@ function FlippableTag(props: FlippableTagProps) {
         onDelete: onDeleteProp,
         onFlip,
         createdByCurrentUser,
+        isEditable,
         ...rest
     } = props;
 
@@ -26,11 +28,11 @@ function FlippableTag(props: FlippableTagProps) {
     }
 
     const variant: ChipProps['variant'] = createdByCurrentUser ? 'filled' : 'outlined';
-    const clickable = !createdByCurrentUser;
+    const clickable = !createdByCurrentUser && isEditable;
     let icon: ReactElement | undefined = undefined;
     const onDelete = createdByCurrentUser ? onDeleteProp : handleFlip;
 
-    if (!createdByCurrentUser) {
+    if (!createdByCurrentUser && isEditable) {
         icon = <Add />;
     }
 
@@ -41,7 +43,7 @@ function FlippableTag(props: FlippableTagProps) {
             label={name}
             clickable={clickable}
             onClick={handleFlip}
-            onDelete={onDelete}
+            onDelete={isEditable ? onDelete : undefined}
             deleteIcon={icon}
         />
     )

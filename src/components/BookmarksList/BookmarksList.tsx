@@ -10,13 +10,14 @@ import { Tags } from './Tags';
 
 interface BookmarksListProps {
     category: number;
+    isActive: boolean;
 }
 
 /**
  * @todo format dates
  */
 function BookmarksList(props: BookmarksListProps) {
-    const { category } = props;
+    const { category, isActive } = props;
     const [order, setOrder] = useState<'asc' | 'desc'>('desc');
     const [orderBy, setOrderBy] = useState('createdAt');
     const [take, setTake] = useState(10);
@@ -106,6 +107,7 @@ function BookmarksList(props: BookmarksListProps) {
                         setOrder(nextOrder);
                         setOrderBy(field)
                     }}
+                    isActive={isActive}
                 />
                 <TableBody>
                     {helperText && (
@@ -120,7 +122,7 @@ function BookmarksList(props: BookmarksListProps) {
                             tabIndex={-1}
                         >
                             <TableCell>
-                                <Link href={row.url}>{row.title}</Link>
+                                <Link href={row.url} title={row.url}>{row.title}</Link>
                             </TableCell>
                             <TableCell>
                                 {row.aliases.length || null}
@@ -132,14 +134,17 @@ function BookmarksList(props: BookmarksListProps) {
                                     tags={row.tags}
                                     onAdd={(tagName) => handleAddTag(row.id, tagName)}
                                     onDelete={(tagName) => handleDeleteTag(row.id, tagName)}
+                                    isEditable={isActive}
                                 />
                             </TableCell>
-                            <TableCell padding='none'>
-                                <BookmarkEditorDialogButton
-                                    bookmark={row}
-                                    onSuccess={refetchBookmarks}
-                                />
-                            </TableCell>
+                            {isActive && (
+                                <TableCell padding='none'>
+                                    <BookmarkEditorDialogButton
+                                        bookmark={row}
+                                        onSuccess={refetchBookmarks}
+                                    />
+                                </TableCell>
+                            )}
                         </TableRow>
                     ))}
                 </TableBody>

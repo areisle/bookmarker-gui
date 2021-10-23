@@ -6,6 +6,7 @@ interface EnhancedTableProps {
     order: 'asc' | 'desc';
     orderBy: string | null | undefined;
     onRequestSort: (field: string, order: 'asc' | 'desc') => void;
+    isActive: boolean;
 }
 
 interface HeaderCellProps {
@@ -49,7 +50,7 @@ function SortableHeaderCell(props: HeaderCellProps) {
  * show filters
  */
 function Header(props: EnhancedTableProps) {
-    const { order, orderBy, onRequestSort } = props;
+    const { order, orderBy, onRequestSort, isActive } = props;
 
     return (
         <TableHead>
@@ -75,9 +76,11 @@ function Header(props: EnhancedTableProps) {
                 <TableCell sx={{ top: 48 }}>
                     tags
                 </TableCell>
-                <TableCell sx={{ top: 48 }}>
-                    edit
-                </TableCell>
+                {isActive && (
+                    <TableCell sx={{ top: 48 }}>
+                        edit
+                    </TableCell>
+                )}
             </TableRow>
         </TableHead>
     );

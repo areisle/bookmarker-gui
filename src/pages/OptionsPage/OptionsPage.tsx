@@ -49,7 +49,7 @@ function OptionsPage() {
         content = (
             <>
                 <TabPanel value={tab} index={0}>
-                    <BookmarksList category={id} />
+                    <BookmarksList category={id} isActive={Boolean(category?.isActive)} />
                 </TabPanel>
                 <TabPanel value={tab} index={1}>
                     <CategorySettings id={id} category={category} isLoading={isLoadingCategory} />

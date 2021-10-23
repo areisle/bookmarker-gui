@@ -28,6 +28,7 @@ interface GroupedTagsProps {
     onAdd: (tagName: string) => void;
     onDelete?: (tagName: string) => void;
     getTagProps?: (props: { index: number }) => Partial<ReturnType<AutocompleteGetTagProps>>;
+    isEditable: boolean;
 }
 
 
@@ -38,7 +39,7 @@ interface GroupedTagsProps {
  * @returns
  */
 function GroupedTags(props: GroupedTagsProps) {
-    const { tags, onAdd, getTagProps, onDelete } = props;
+    const { tags, onAdd, getTagProps, onDelete, isEditable } = props;
 
     return (
         <>
@@ -55,6 +56,7 @@ function GroupedTags(props: GroupedTagsProps) {
                         name={tag.name}
                         onFlip={onAdd}
                         createdByCurrentUser={tag.createdByCurrentUser}
+                        isEditable={isEditable}
                     />
                 )
             })}

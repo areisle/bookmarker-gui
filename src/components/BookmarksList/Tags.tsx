@@ -9,6 +9,7 @@ interface TagsProps {
     }[];
     onDelete: (tagName: string) => void;
     onAdd: (tagName: string) => void;
+    isEditable: boolean;
 
 }
 
@@ -19,7 +20,7 @@ interface TagsProps {
  * @returns
  */
 function Tags(props: TagsProps) {
-    const { tags, onDelete, onAdd } = props;
+    const { tags, onDelete, onAdd, isEditable } = props;
 
     const groupedTags = useGroupedTags(tags);
 
@@ -29,6 +30,7 @@ function Tags(props: TagsProps) {
                 onAdd={onAdd}
                 onDelete={onDelete}
                 tags={groupedTags}
+                isEditable={isEditable}
             />
         </Box>
     )
