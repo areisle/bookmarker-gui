@@ -111,6 +111,11 @@ function AuthProvider(props: { children: ReactNode }) {
                     type='password'
                     sx={{ minWidth: 300, marginTop: 1 }}
                     onChange={(e) => setPassword(e.target.value)}
+                    onKeyUp={(e) => {
+                        if (e.key === 'Enter') {
+                            handleLogin()
+                        }
+                    }}
                     value={password}
                 />
                 {errorLoggingIn && <Typography color='error' sx={{ marginTop: 1 }}>{errorLoggingIn.message}</Typography>}
