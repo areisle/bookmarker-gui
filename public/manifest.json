@@ -1,24 +1,30 @@
 {
-    "manifest_version": 3,
+    "manifest_version": 2,
     "name": "Bookmarker",
     "short_name": "bookmarker",
-    "version": "1.0.0",
+    "version": "0.1.0",
     "description": "Bookmark Tagger",
     "icons": {
         "64": "icons/icon-bookmarked-64.png"
     },
-    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjJaqNrLLk2LcuQtjZLuniH8Nbiby4m86K5MRWKz8nnlIsMsKYjJxzfFOSN0HfHK8Vz+RW2d0YiICb151ZhNJUeAninyOO2GTLMqY/dbEWqYRTYMv5NhPp4sRmqCexkMPpWjNatw/HTbgN7hMt7b4jIISFw6qYcxqh7uf9ohgZaKlJpaW2SnrkAy5fkIbbkEndaIOnH5NXt9+QFT0UgZxsJm2B9u+1QcNFSRSFN3xs+44aIcKsuw1/wjVloo6+U8brRnSxDS4xU6Xpsj7VygtipRWRtlGQo+SdkAFlnwt2Z5s5KpjanWZzymJ7W4HUNGEXUb7B8vsRS/qprYcG/yXVwIDAQAB",
+    "background": {
+        "scripts": [
+            "browser-polyfill.js",
+            "background.js"
+        ]
+    },
     "permissions": [
+        "activeTab",
         "tabs",
-        "identity",
         "storage"
     ],
-    "action": {
-        "default_title": "Bookmark Tagger",
-        "default_popup": "popup.html"
-    },
     "options_page": "options.html",
-    "background": {
-        "service_worker": "background.js"
-    }
+    "browser_action": {
+        "default_title": "Bookmark Tagger",
+        "default_popup": "popup.html",
+        "default_icon": {
+            "64": "icons/icon-unbookmarked-64.png"
+        }
+    },
+    "content_security_policy": "script-src 'self' https://apis.google.com; object-src 'self'"
 }

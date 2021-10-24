@@ -55,7 +55,7 @@ function PopupPage() {
                     <Button
                         variant='text'
                         sx={{ padding: 0 }}
-                        onClick={() => chrome?.runtime?.openOptionsPage()}
+                        onClick={() => global.browser?.runtime?.openOptionsPage()}
                     >
                         see all bookmarks
                     </Button>

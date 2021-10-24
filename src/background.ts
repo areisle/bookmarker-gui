@@ -1,30 +1,35 @@
-import { getToken } from "./queries/auth";
+import { initializeApp } from "firebase/app";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+
+const app = initializeApp(JSON.parse(process.env.FIREBASE_CONFIG!));
+const auth = getAuth();
 
 async function getCurrentUrl() {
-    let queryOptions = { active: true, currentWindow: true };
-    let [tab] = await chrome.tabs.query(queryOptions);
+    const [tab] = await global.browser.tabs.query({
+        active: true,
+        lastFocusedWindow: true,
+    });
     return tab.url;
 }
 
 const setIcon = async () => {
     const url = await getCurrentUrl();
+    const token = await auth.currentUser?.getIdToken();
     if (url) {
-        const iconUrl = await getIconUrl(url);
-
-        chrome.action.setIcon({ path: iconUrl }, () => {
-            /* ... */
-        });
+        const iconUrl = await getIconUrl(token, url);
+        await global.browser.browserAction.setIcon({ path: iconUrl });
     }
 };
 
-const getIconUrl = async (url: string): Promise<string> => {
+const getIconUrl = async (
+    token: string | undefined,
+    url: string
+): Promise<string> => {
+    if (!token || !url) {
+        return "icons/icon-warning-64.png";
+    }
+
     try {
-        const token = await getToken();
-
-        if (!token) {
-            return "icons/icon-warning-64.png";
-        }
-
         const response = await fetch(process.env.API_URL!, {
             method: "POST",
             headers: {
@@ -59,10 +64,14 @@ const getIconUrl = async (url: string): Promise<string> => {
     return "icons/icon-warning-64.png";
 };
 
-chrome.tabs.onActivated.addListener((arg) => {
+global.browser.tabs.onActivated.addListener((arg) => {
     setIcon();
 });
 
-chrome.tabs.onUpdated.addListener(async (tabId, _, tab) => {
+global.browser.tabs.onUpdated.addListener(async (tabId, _, tab) => {
+    setIcon();
+});
+
+onAuthStateChanged(auth, async (user) => {
     setIcon();
 });

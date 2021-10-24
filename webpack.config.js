@@ -8,6 +8,7 @@ const htmlTemplate = `
 <!DOCTYPE html>
 <html>
   <head>
+    <script type="application/javascript" src="browser-polyfill.js"></script>
     <meta charset="UTF-8" />
     <title>bookmarker</title>
   </head>
@@ -65,6 +66,9 @@ module.exports = {
         new CopyPlugin({
             patterns: [
                 { from: "public" },
+                {
+                    from: 'node_modules/webextension-polyfill/dist/browser-polyfill.js',
+                }
             ],
         }),
         new Dotenv(),
@@ -73,6 +77,6 @@ module.exports = {
             entryOnly: true,
             raw: true,
             include: ['background']
-        })
+        }),
     ],
 }
