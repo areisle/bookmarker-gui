@@ -9,7 +9,7 @@ function PopupPage() {
     return (
         <span>
             <CustomThemeProvider>
-                <AuthenticatedQueryProvider>
+                <AuthenticatedQueryProvider isPopup={true}>
                     <PageMetaProvider>
                         <Popup />
                     </PageMetaProvider>

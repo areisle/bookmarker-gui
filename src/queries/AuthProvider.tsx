@@ -23,8 +23,8 @@ interface AuthContextState {
 
 const AuthContext = createContext<AuthContextState | undefined>(undefined);
 
-function AuthProvider(props: { children: ReactNode }) {
-    const { children } = props;
+function AuthProvider(props: { children: ReactNode, isPopup: boolean }) {
+    const { children, isPopup } = props;
 
     const token = useToken();
 
@@ -42,10 +42,14 @@ function AuthProvider(props: { children: ReactNode }) {
     );
 
     const handleLogin = useCallback(() => {
+        if (isPopup) {
+            global.browser?.runtime.openOptionsPage()
+            return;
+        }
         if (!isLoggingOut || !isLoggingIn) {
             login();
         }
-    }, [login, isLoggingOut, isLoggingIn])
+    }, [login, isLoggingOut, isLoggingIn, isPopup])
 
     const handleLogout = useCallback(() => {
         if (!isLoggingOut || !isLoggingIn) {
@@ -82,12 +86,12 @@ function AuthProvider(props: { children: ReactNode }) {
     )
 }
 
-const AuthenticatedQueryProvider = (props: { children: ReactNode }) => {
-    const { children } = props;
+const AuthenticatedQueryProvider = (props: { children: ReactNode, isPopup: boolean }) => {
+    const { children, isPopup } = props;
 
     return (
         <QueryClientProvider client={queryClient}>
-            <AuthProvider>
+            <AuthProvider isPopup={isPopup}>
                 {children}
             </AuthProvider>
         </QueryClientProvider>
