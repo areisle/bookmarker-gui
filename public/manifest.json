@@ -26,5 +26,6 @@
             "64": "icons/icon-unbookmarked-64.png"
         }
     },
+    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArocLzJLtkSheUq6GL7KkhoGpXYvEn9x8KqERS0SWM8/WA9VJA4kqXVYMThrKQSutPZCxGMQTEbDaDzAhRI+gULEi+eg9w84d4NuQCd4IIKv57YqR4S/favSVfIZBUpTSGVl3D8XJxA173Y5IFnFTxa8fKPYpC2CfppkNxV5cOa6pPNhOarMNOch4KAO66NHd2KVeEvXve78bsEIuRESlLqEAaxmXwQQAI2ifgAmweDxvjeSnIjdDez5Tb5yegcY0sMg/Ts13T4eVMzioxyWEhKVySoRnSv0WQ4tHlxdWGKnyWiU10hA9Hx1CemgkfZKsvqVt9aPIuyyE/6OUtQsb8QIDAQAB",
     "content_security_policy": "script-src 'self' https://apis.google.com; object-src 'self'"
 }
