@@ -26,7 +26,7 @@ const defaultTags: Tag[] = [];
  * but indicate that when they match a tag to exclude not include it
  */
 function TagsEditor(props: TagsEditorProps) {
-    const { categoryId, value: ungroupedValue, onChange } = props;
+    const { categoryId, value: ungroupedValue, onChange, disabled } = props;
 
     const groupedValue = useGroupedTags(ungroupedValue);
 
@@ -107,6 +107,7 @@ function TagsEditor(props: TagsEditorProps) {
                     tags={groupedValue}
                     onAdd={(name) => onChange([...ungroupedValue ?? [], { name, createdByCurrentUser: true }])}
                     getTagProps={getTagProps}
+                    isEditable={!disabled}
                 />
             )}
         />
