@@ -4,20 +4,18 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 const app = initializeApp(JSON.parse(process.env.FIREBASE_CONFIG!));
 const auth = getAuth();
 
-async function getCurrentUrl() {
+const setIcon = async () => {
     const [tab] = await global.browser.tabs.query({
         active: true,
         lastFocusedWindow: true,
     });
-    return tab.url;
-}
-
-const setIcon = async () => {
-    const url = await getCurrentUrl();
     const token = await auth.currentUser?.getIdToken();
-    if (url) {
-        const iconUrl = await getIconUrl(token, url);
-        await global.browser.browserAction.setIcon({ path: iconUrl });
+    if (tab.url) {
+        const iconUrl = await getIconUrl(token, tab.url);
+        await global.browser.browserAction.setIcon({
+            path: iconUrl,
+            tabId: tab.id,
+        });
     }
 };
 
