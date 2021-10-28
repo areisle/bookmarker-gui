@@ -3,7 +3,7 @@ import React from 'react';
 import { BookmarkEditor, CategorySelect } from '../../components';
 import { useAddBookmark, useAuth, useRemoveBookmark, useUpdateBookmark } from '../../queries';
 import { useBookmark } from './useSelectedBookmark';
-import { useSelectedCategory } from './useSelectedCategory';
+import { useSelectedCategory } from '../../queries/useSelectedCategory';
 
 
 /**
