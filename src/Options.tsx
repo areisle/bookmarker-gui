@@ -8,7 +8,7 @@ function Options() {
     return (
         <span>
             <CustomThemeProvider>
-                <AuthenticatedQueryProvider>
+                <AuthenticatedQueryProvider isPopup={false}>
                     <OptionsPage />
                 </AuthenticatedQueryProvider>
             </CustomThemeProvider>

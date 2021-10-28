@@ -1,38 +1,27 @@
 /**
  * interface for using storage or local storage
  *
- * despite what the docs show, promises do not seem to work for chrome.storage
+ * despite what the docs show, promises do not seem to work for global.browser.storage
  */
 
 const get = async (key: string) => {
-    if (typeof chrome !== 'undefined' && chrome.storage) {
-        return new Promise<string>((resolve) => {
-            chrome.storage.sync.get([key], (result) => {
-                resolve(result[key]);
-            });
-        });
+    if (typeof global.browser !== 'undefined' && global.browser.storage) {
+        const result = await global.browser.storage.sync.get([key])
+        return result[key]
     }
     return localStorage.getItem(key);
 }
 
 const set = async (key: string, value: string) => {
-    if (typeof chrome !== 'undefined' && chrome.storage) {
-        return new Promise((resolve) => {
-            chrome.storage.sync.set({ [key]: value }, () => {
-                resolve(null);
-            });
-        });
+    if (typeof global.browser !== 'undefined' && global.browser.storage) {
+        await global.browser.storage.sync.set({ [key]: value });
     }
     localStorage.setItem(key, value);
 }
 
 const remove = async (key: string) => {
-    if (typeof chrome !== 'undefined' && chrome.storage) {
-        return new Promise((resolve) => {
-            chrome.storage.sync.remove([key], () => {
-                resolve(null);
-            });
-        });
+    if (typeof global.browser !== 'undefined' && global.browser.storage) {
+        await global.browser.storage.sync.remove([key])
     }
     localStorage.removeItem(key);
 

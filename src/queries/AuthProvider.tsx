@@ -1,7 +1,9 @@
-import { Box, Button, CircularProgress, TextField, Typography } from "@mui/material";
-import React, { createContext, ReactNode, useCallback, useContext, useState } from "react";
-import { QueryClient, QueryClientProvider, useMutation, useQuery } from "react-query";
-import { getToken, removeToken, setToken, USE_AUTH } from "./auth";
+import { Box, Button, CircularProgress, Typography } from "@mui/material";
+import React, { createContext, ReactNode, useCallback, useContext } from "react";
+import { QueryClient, QueryClientProvider, useMutation } from "react-query";
+import { requestLogin, requestLogout, useToken } from "./firebase";
+
+const USE_AUTH = process.env.NODE_ENV !== "development" || !process.env.NO_AUTH;
 
 class AuthenticationError extends Error { }
 
@@ -21,68 +23,33 @@ interface AuthContextState {
 
 const AuthContext = createContext<AuthContextState | undefined>(undefined);
 
-function AuthProvider(props: { children: ReactNode }) {
-    const { children } = props;
+function AuthProvider(props: { children: ReactNode, isPopup: boolean }) {
+    const { children, isPopup } = props;
 
-    const { data: token = '', refetch } = useQuery<string, Error>('isAuthenticated', getToken, {
-        enabled: USE_AUTH,
-    })
-
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const token = useToken();
 
     const {
         mutate: login,
         isLoading: isLoggingIn,
         error: errorLoggingIn,
-    } = useMutation<string, Error>(
-        async () => {
-            // remove old token
-            await removeToken()
-
-            const response = await fetch(process.env.API_URL!, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    query: `
-                    mutation login($email: String!, $password: String!) {
-                        login(email: $email, password: $password)
-                    }
-                    `,
-                    variables: { email, password },
-                }),
-            });
-
-            const body = await response.json();
-
-            if (!response.ok) {
-                throw new Error(`Authentication Failed. ${body.message}`);
-            }
-
-            if (body.errors) {
-                throw new Error(`${body.errors[0]?.message ?? 'An error occurred.'}`);
-            }
-
-            const token = body.data.login
-            await setToken(token ?? '')
-
-            return token;
-        },
-        { onSuccess: () => refetch() }
+    } = useMutation<unknown, Error>(
+        async () => requestLogin(),
     );
 
+
     const { mutate: logout, isLoading: isLoggingOut, error: errorLoadingOut } = useMutation<unknown, Error>(
-        async () => removeToken(),
-        { onSuccess: () => refetch() }
+        requestLogout,
     );
 
     const handleLogin = useCallback(() => {
+        if (isPopup) {
+            global.browser?.runtime.openOptionsPage()
+            return;
+        }
         if (!isLoggingOut || !isLoggingIn) {
             login();
         }
-    }, [login, isLoggingOut, isLoggingIn])
+    }, [login, isLoggingOut, isLoggingIn, isPopup])
 
     const handleLogout = useCallback(() => {
         if (!isLoggingOut || !isLoggingIn) {
@@ -99,29 +66,11 @@ function AuthProvider(props: { children: ReactNode }) {
                     alignItems: 'flex-start',
                 }}
             >
-                <TextField
-                    label='email'
-                    type='email'
-                    sx={{ minWidth: 300, marginTop: 1 }}
-                    onChange={(e) => setEmail(e.target.value)}
-                    value={email}
-                />
-                <TextField
-                    label='password'
-                    type='password'
-                    sx={{ minWidth: 300, marginTop: 1 }}
-                    onChange={(e) => setPassword(e.target.value)}
-                    onKeyUp={(e) => {
-                        if (e.key === 'Enter') {
-                            handleLogin()
-                        }
-                    }}
-                    value={password}
-                />
                 {errorLoggingIn && <Typography color='error' sx={{ marginTop: 1 }}>{errorLoggingIn.message}</Typography>}
                 <Button
                     onClick={handleLogin}
                     endIcon={isLoggingIn && <CircularProgress size={20} />}
+                    disabled={isLoggingIn || isLoggingOut}
                     sx={{ marginTop: 1 }}
                 >
                     Login
@@ -137,12 +86,12 @@ function AuthProvider(props: { children: ReactNode }) {
     )
 }
 
-const AuthenticatedQueryProvider = (props: { children: ReactNode }) => {
-    const { children } = props;
+const AuthenticatedQueryProvider = (props: { children: ReactNode, isPopup: boolean }) => {
+    const { children, isPopup } = props;
 
     return (
         <QueryClientProvider client={queryClient}>
-            <AuthProvider>
+            <AuthProvider isPopup={isPopup}>
                 {children}
             </AuthProvider>
         </QueryClientProvider>

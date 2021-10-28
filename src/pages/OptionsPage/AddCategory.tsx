@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 import { useAddCategory } from '../../queries';
 
+const stop = (e: React.KeyboardEvent<HTMLDivElement>) => e.stopPropagation();
+
 function AddCategory() {
     const [inputValue, setInputValue] = useState('');
     const queryClient = useQueryClient();
@@ -30,7 +32,11 @@ function AddCategory() {
                 placeholder='Add Category'
                 disabled={isLoading}
                 value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
+                onChange={(e) => {
+                    setInputValue(e.target.value)
+                }}
+                // see https://github.com/mui-org/material-ui/issues/19096
+                onKeyDown={stop}
                 onKeyUp={handleEnter}
                 InputProps={{
                     endAdornment: (

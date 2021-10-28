@@ -1,6 +1,5 @@
 import React, { createContext, ReactNode, useContext } from 'react';
 import { useQuery } from 'react-query';
-import { getCurrentTab } from './chrome';
 
 interface PageMetaContextState {
     url?: string;
@@ -14,7 +13,13 @@ function usePageMeta() {
 }
 
 function PageMetaProvider({ children }: { children: ReactNode }) {
-    const { data: tab, isLoading } = useQuery('current-tab', getCurrentTab);
+    const { data: tab, isLoading } = useQuery('current-tab', async () => {
+        const [tab] = await global.browser.tabs.query({
+            active: true,
+            lastFocusedWindow: true,
+        });
+        return tab;
+    });
 
     if (isLoading) {
 
