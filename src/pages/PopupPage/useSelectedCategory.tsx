@@ -22,6 +22,7 @@ const useSelectedCategory = () => {
     const {
         data: categories,
         isLoading: isLoadingCategories,
+        error,
     } = useCategories(
         {},
         {
@@ -54,8 +55,11 @@ const useSelectedCategory = () => {
     }, [isLoadingCategories, isLoadingDefault, selectedCategoryId, defaultCategoryId, categories]);
 
     return {
+        categories,
         categoryId: categoryId,
         setCategoryId: handleSetCategoryId,
+        isLoading: isLoadingCategories || isLoadingDefault,
+        error,
     }
 }
 
