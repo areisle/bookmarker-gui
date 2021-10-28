@@ -49,6 +49,7 @@ function TagsFilter(props: TagsFilterProps) {
                     setInputText(newInputValue);
                 }}
                 onChange={(e, nextTags) => onChange(nextTags)}
+                value={value}
                 filterOptions={filterOptions}
                 filterSelectedOptions={true}
                 autoHighlight
@@ -73,16 +74,16 @@ function TagsFilter(props: TagsFilterProps) {
                         }}
                     />
                 )}
-                renderTags={(values_, getTagProps) =>
-                    // cannot use values_ or ui doesn't update on click
-                    value.map(({ name, exclude }, index) => {
+                renderTags={(values, getTagProps) =>
+                    values.map(({ name, exclude }, index) => {
                         return (
                             <Chip
                                 label={name}
                                 {...getTagProps({ index })}
                                 onClick={(e) => {
                                     e.stopPropagation();
-                                    onChange(value.map((tag) => tag.name === name ? ({ name, exclude: !exclude }) : tag));
+                                    const next = values.map((tag) => tag.name === name ? ({ name, exclude: !exclude }) : tag);
+                                    onChange(next);
                                 }}
                                 clickable={true}
                                 icon={exclude ? <Remove /> : <Add />}
