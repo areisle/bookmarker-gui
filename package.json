@@ -7,6 +7,7 @@
         "start": "webpack serve --mode development",
         "build:dev": "rm -rf ./dist && webpack --mode development",
         "build": "rm -rf ./dist && webpack --mode production",
+        "zip": "rm -f bookmarker.zip && cd dist && zip -r ../bookmarker.zip *",
         "storybook": "start-storybook -p 6006",
         "build-storybook": "build-storybook",
         "generate-types": "graphql-codegen --config codegen.yml"
