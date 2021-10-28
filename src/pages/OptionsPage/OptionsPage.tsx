@@ -1,30 +1,24 @@
-import React, { ReactNode, useState, useLayoutEffect } from 'react';
+import React, { ReactNode, useState } from 'react';
 import { Button, ListItem, ListItemText, MenuItem, MenuList, Tab, Tabs, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { CategorySettings } from '../../components/CategorySettings';
-import { useAuth, useCategories, useGetCategory, useJoinCategory } from '../../queries';
+import { useAuth, useGetCategory, useJoinCategory } from '../../queries';
 import { AddCategory } from './AddCategory';
 import { TabPanel, tabProps } from '../../components/TabPanel';
 import { BookmarksList } from '../../components/BookmarksList';
+import { useSelectedCategory } from '../../queries/useSelectedCategory';
 
 function OptionsPage() {
-    const { data, error, isLoading: loading } = useCategories({});
-
-    const [id, setId] = useState<number | null>(null);
+    const {
+        categories,
+        categoryId: id,
+        setCategoryId: setId,
+        isLoading: loading,
+        error,
+    } = useSelectedCategory();
 
     const [tab, setTab] = useState(0);
     const { logout } = useAuth();
-
-    useLayoutEffect(() => {
-        if (!id && data?.categories.length) {
-            setId(data.categories[0].id)
-        } else if (id) {
-            const exists = data?.categories.some((category) => category.id === id);
-            if (!exists) {
-                setId(null)
-            }
-        }
-    }, [data, id]);
 
     const { data: category, isLoading: isLoadingCategory, refetch } = useGetCategory(
         { id: id! },
@@ -60,7 +54,6 @@ function OptionsPage() {
         content = <Typography>No category selected.</Typography>
     }
 
-
     return (
         <Box sx={{ display: 'grid', gridTemplateColumns: 'min-content 1fr' }}>
             {/* show categories */}
@@ -70,7 +63,7 @@ function OptionsPage() {
                     sx={{ position: 'sticky', top: 0, padding: 1, minWidth: 160 }}
                     disablePadding={true}
                 >
-                    {data?.categories.map((category) => (
+                    {categories?.map((category) => (
                         <MenuItem
                             key={category.id}
                             onClick={() => setId(category.id)}

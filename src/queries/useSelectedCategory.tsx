@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
-import { useCategories } from '../../queries';
-import { storage } from '../../queries/storage';
+import { useCategories } from '.';
+import { storage } from './storage';
 
 const LAST_CATEGORY_KEY = 'BOOKMARKER_EXT__LAST_CATEGORY';
 
@@ -22,6 +22,7 @@ const useSelectedCategory = () => {
     const {
         data: categories,
         isLoading: isLoadingCategories,
+        error,
     } = useCategories(
         {},
         {
@@ -54,8 +55,11 @@ const useSelectedCategory = () => {
     }, [isLoadingCategories, isLoadingDefault, selectedCategoryId, defaultCategoryId, categories]);
 
     return {
+        categories,
         categoryId: categoryId,
         setCategoryId: handleSetCategoryId,
+        isLoading: isLoadingCategories || isLoadingDefault,
+        error,
     }
 }
 
