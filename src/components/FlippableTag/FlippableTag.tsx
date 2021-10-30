@@ -10,6 +10,7 @@ interface FlippableTagProps extends Omit<ChipProps, 'id'> {
     createdByCurrentUser?: number;
     hide?: boolean;
     isEditable: boolean;
+    count?: number;
 }
 
 function FlippableTag(props: FlippableTagProps) {
@@ -20,6 +21,7 @@ function FlippableTag(props: FlippableTagProps) {
         onFlip,
         createdByCurrentUser,
         isEditable,
+        count = 0,
         ...rest
     } = props;
 
@@ -40,7 +42,7 @@ function FlippableTag(props: FlippableTagProps) {
         <Chip
             variant={variant}
             {...rest}
-            label={name}
+            label={count > 1 ? `${name} (${count})` : name}
             clickable={clickable}
             onClick={handleFlip}
             onDelete={isEditable ? onDelete : undefined}

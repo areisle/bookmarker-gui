@@ -34,6 +34,7 @@ function Tags(props: TagsProps) {
                         onFlip={onAdd}
                         createdByCurrentUser={tag.createdByCurrentUser}
                         isEditable={isEditable}
+                        count={tag.total}
                     />
                 )
             })}

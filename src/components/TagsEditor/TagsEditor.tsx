@@ -129,6 +129,7 @@ function TagsEditor(props: TagsEditorProps) {
                             onFlip={handleAddExistingTag}
                             createdByCurrentUser={tag.createdByCurrentUser}
                             isEditable={!disabled}
+                            count={tag.total}
                         />
                     )
                 })

@@ -23,11 +23,29 @@ export const Unflipped: Story<FlippableTagProps> = {
     },
 }
 
+export const UnflippedWithCount: Story<FlippableTagProps> = {
+    args: {
+        name: 'tag name',
+        createdByCurrentUser: 1,
+        isEditable: true,
+        count: 3,
+    },
+}
+
 export const Flipped: Story<FlippableTagProps> = {
     args: {
         name: 'tag name',
         createdByCurrentUser: 0,
         isEditable: true,
+    }
+}
+
+export const FlippedWithCount: Story<FlippableTagProps> = {
+    args: {
+        name: 'tag name',
+        createdByCurrentUser: 0,
+        isEditable: true,
+        count: 2,
     }
 }
 
