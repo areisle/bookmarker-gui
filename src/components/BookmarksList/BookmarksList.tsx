@@ -1,12 +1,13 @@
 import { Button, Link, Table, TableBody, TableCell, TableRow, Typography } from '@mui/material';
 import { Box } from '@mui/system';
-import React, { ReactNode, useLayoutEffect, useMemo, useState } from 'react';
+import React, { ReactNode, useMemo, useState } from 'react';
 import { useAddTag, useBookmarks, useRemoveTag } from '../../queries';
 import { BookmarkEditorDialogButton } from '../BookmarkEditor';
 import { RelativeDate } from '../RelativeDate';
 import { TagsFilter } from '../TagsFilter';
 import { Header } from './Header';
 import { Tags } from './Tags';
+import { useFilterTags } from './useFIlterTags';
 
 interface BookmarksListProps {
     category: number;
@@ -21,11 +22,7 @@ function BookmarksList(props: BookmarksListProps) {
     const [order, setOrder] = useState<'asc' | 'desc'>('desc');
     const [orderBy, setOrderBy] = useState('createdAt');
     const [take, setTake] = useState(10);
-    const [tagFilters, setTagFilters] = useState<{ name: string; exclude?: boolean }[]>([]);
-
-    useLayoutEffect(() => {
-        setTagFilters([])
-    }, [category])
+    const [tagFilters, setTagFilters] = useFilterTags(category);
 
     const bookmarkWhere = useMemo(() => {
         return {
