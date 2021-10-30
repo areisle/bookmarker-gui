@@ -1,11 +1,12 @@
 import { Box } from '@mui/system';
 import React from 'react';
-import { GroupedTags, useGroupedTags } from '../GroupedTags';
+import { FlippableTag } from '../FlippableTag';
 
 interface TagsProps {
     tags: {
         name: string;
-        createdByCurrentUser: boolean;
+        createdByCurrentUser: number;
+        total: number;
     }[];
     onDelete: (tagName: string) => void;
     onAdd: (tagName: string) => void;
@@ -22,16 +23,20 @@ interface TagsProps {
 function Tags(props: TagsProps) {
     const { tags, onDelete, onAdd, isEditable } = props;
 
-    const groupedTags = useGroupedTags(tags);
-
     return (
         <Box sx={{ display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
-            <GroupedTags
-                onAdd={onAdd}
-                onDelete={onDelete}
-                tags={groupedTags}
-                isEditable={isEditable}
-            />
+            {tags.map((tag) => {
+                return (
+                    <FlippableTag
+                        key={tag.name}
+                        onDelete={onDelete ? () => onDelete(tag.name) : undefined}
+                        name={tag.name}
+                        onFlip={onAdd}
+                        createdByCurrentUser={tag.createdByCurrentUser}
+                        isEditable={isEditable}
+                    />
+                )
+            })}
         </Box>
     )
 }

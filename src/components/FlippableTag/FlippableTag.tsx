@@ -7,7 +7,7 @@ interface FlippableTagProps extends Omit<ChipProps, 'id'> {
     name: string;
     isDeletable?: boolean;
     onFlip: (name: string) => void;
-    createdByCurrentUser?: boolean;
+    createdByCurrentUser?: number;
     hide?: boolean;
     isEditable: boolean;
 }

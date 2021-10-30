@@ -10,7 +10,7 @@ export default {
 export const ReadOnly: Story<FlippableTagProps> = {
     args: {
         name: 'tag name',
-        createdByCurrentUser: false,
+        createdByCurrentUser: 0,
         isEditable: false,
     },
 }
@@ -18,7 +18,7 @@ export const ReadOnly: Story<FlippableTagProps> = {
 export const Unflipped: Story<FlippableTagProps> = {
     args: {
         name: 'tag name',
-        createdByCurrentUser: true,
+        createdByCurrentUser: 1,
         isEditable: true,
     },
 }
@@ -26,7 +26,7 @@ export const Unflipped: Story<FlippableTagProps> = {
 export const Flipped: Story<FlippableTagProps> = {
     args: {
         name: 'tag name',
-        createdByCurrentUser: false,
+        createdByCurrentUser: 0,
         isEditable: true,
     }
 }
@@ -34,7 +34,7 @@ export const Flipped: Story<FlippableTagProps> = {
 export const FlippedWithVariant: Story<FlippableTagProps> = {
     args: {
         name: 'tag name',
-        createdByCurrentUser: false,
+        createdByCurrentUser: 0,
         variant: 'filled',
         isEditable: true,
     }
