@@ -1,7 +1,9 @@
 query categories($activeOnly: Boolean) {
     categories(activeOnly: $activeOnly) {
-        id
-        name
+        data {
+            id
+            name
+        }
     }
 }
 

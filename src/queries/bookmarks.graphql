@@ -12,20 +12,22 @@ query bookmarks(
         where: $bookmarksWhere
         orderBy: $bookmarksOrderBy
     ) {
-        id
-        title
-        url
-        description
-        createdAt
-        category {
+        data {
             id
-        }
-        tags {
-            createdByCurrentUser
-            name
-        }
-        aliases {
+            title
             url
+            description
+            createdAt
+            category {
+                id
+            }
+            tags {
+                createdByCurrentUser
+                name
+            }
+            aliases {
+                url
+            }
         }
     }
 }
@@ -46,25 +48,6 @@ query bookmarksForUrl($url: String!) {
         }
         aliases {
             url
-        }
-    }
-}
-
-query getBookmark($id: Int!) {
-    bookmark(id: $id) {
-        title
-        url
-        description
-        createdAt
-    }
-}
-
-query bookmarkTags($id: Int!) {
-    bookmark(id: $id) {
-        tags {
-            id
-            name
-            createdByCurrentUser
         }
     }
 }

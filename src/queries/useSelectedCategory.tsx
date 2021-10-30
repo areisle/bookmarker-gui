@@ -26,7 +26,7 @@ const useSelectedCategory = () => {
     } = useCategories(
         {},
         {
-            select: (response) => response.categories,
+            select: (response) => response.categories.data,
             onSuccess: () => queryClient.invalidateQueries(LAST_CATEGORY_KEY)
         }
     )
