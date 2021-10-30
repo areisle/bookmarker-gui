@@ -41,7 +41,7 @@ function TagsFilter(props: TagsFilterProps) {
     }, { keepPreviousData: true })
 
     return (
-        <Box sx={{ marginTop: '5px' }}>
+        <Box sx={{ marginTop: '10px' }}>
             <Autocomplete
                 disablePortal
                 autoComplete

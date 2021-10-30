@@ -1,6 +1,6 @@
-import { Button, Link, Table, TableBody, TableCell, TableRow, Typography } from '@mui/material';
+import { Button, Link, Table, TableBody, TableCell, TableRow, TextField, Typography } from '@mui/material';
 import { Box } from '@mui/system';
-import React, { ReactNode, useMemo, useState } from 'react';
+import React, { ReactNode, useLayoutEffect, useMemo, useState } from 'react';
 import { useAddTag, useBookmarks, useRemoveTag } from '../../queries';
 import { BookmarkEditorDialogButton } from '../BookmarkEditor';
 import { RelativeDate } from '../RelativeDate';
@@ -23,32 +23,48 @@ function BookmarksList(props: BookmarksListProps) {
     const [orderBy, setOrderBy] = useState('createdAt');
     const [take, setTake] = useState(10);
     const [tagFilters, setTagFilters] = useFilterTags(category);
+    const [search, setSearch] = useState('');
+
+    useLayoutEffect(() => {
+        setSearch('');
+    }, [category]);
 
     const bookmarkWhere = useMemo(() => {
-        return {
-            AND: tagFilters.map(({ name, exclude }) => {
-                if (exclude) {
-                    return {
-                        tags: {
-                            every: {
-                                name: {
-                                    not: name
-                                }
+        const filters: Record<string, unknown>[] = tagFilters.map(({ name, exclude }) => {
+            if (exclude) {
+                return {
+                    tags: {
+                        every: {
+                            name: {
+                                not: name
                             }
                         }
                     }
                 }
+            }
 
-                return {
-                    tags: {
-                        some: {
-                            name
-                        }
+            return {
+                tags: {
+                    some: {
+                        name
                     }
                 }
+            }
+        });
+
+        if (search) {
+            filters.push({
+                OR: [
+                    { title: { contains: search } },
+                    { url: { contains: search } },
+                ]
             })
         }
-    }, [tagFilters]);
+
+        return {
+            AND: filters
+        }
+    }, [tagFilters, search]);
 
     const { data, isLoading: loading, error, refetch: refetchBookmarks, ...rest } = useBookmarks({
         categoryId: category,
@@ -91,6 +107,12 @@ function BookmarksList(props: BookmarksListProps) {
 
     return (
         <Box sx={{ position: 'relative' }}>
+            <TextField
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                label='search by title or url'
+                fullWidth={true}
+            />
             <TagsFilter
                 categoryId={category}
                 value={tagFilters}
