@@ -21,9 +21,10 @@ query bookmarks(
             category {
                 id
             }
-            tags {
+            groupedTags {
                 createdByCurrentUser
                 name
+                total
             }
             aliases {
                 url
@@ -42,9 +43,10 @@ query bookmarksForUrl($url: String!) {
         category {
             id
         }
-        tags {
+        groupedTags {
             name
             createdByCurrentUser
+            total
         }
         aliases {
             url

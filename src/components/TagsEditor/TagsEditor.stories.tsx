@@ -22,8 +22,8 @@ export const NoTags: Story<TagsEditorProps> = {
 export const TagsByCurrentUser: Story<TagsEditorProps> = {
     args: {
         value: [
-            { name: 'historical', createdByCurrentUser: true },
-            { name: 'funny', createdByCurrentUser: true }
+            { name: 'historical', createdByCurrentUser: 1, total: 1 },
+            { name: 'funny', createdByCurrentUser: 1, total: 1 }
         ],
         categoryId: 1
     }
@@ -32,8 +32,8 @@ export const TagsByCurrentUser: Story<TagsEditorProps> = {
 export const TagsByOtherUser: Story<TagsEditorProps> = {
     args: {
         value: [
-            { name: 'historical', createdByCurrentUser: false },
-            { name: 'funny', createdByCurrentUser: false }
+            { name: 'historical', createdByCurrentUser: 0, total: 1 },
+            { name: 'funny', createdByCurrentUser: 0, total: 1 }
         ],
         categoryId: 1
     }
@@ -42,9 +42,8 @@ export const TagsByOtherUser: Story<TagsEditorProps> = {
 export const TagsByMultipleUsers: Story<TagsEditorProps> = {
     args: {
         value: [
-            { name: 'historical', createdByCurrentUser: false },
-            { name: 'historical', createdByCurrentUser: true },
-            { name: 'funny', createdByCurrentUser: false }
+            { name: 'historical', createdByCurrentUser: 1, total: 2 },
+            { name: 'funny', createdByCurrentUser: 0, total: 1 }
         ],
         categoryId: 1
     }
@@ -53,10 +52,8 @@ export const TagsByMultipleUsers: Story<TagsEditorProps> = {
 export const ManyTagsByMultipleUsers: Story<TagsEditorProps> = {
     args: {
         value: [
-            { name: 'historical', createdByCurrentUser: false },
-            { name: 'historical', createdByCurrentUser: true },
-            { name: 'funny', createdByCurrentUser: true },
-            { name: 'funny', createdByCurrentUser: false }
+            { name: 'historical', createdByCurrentUser: 1, total: 2 },
+            { name: 'funny', createdByCurrentUser: 1, total: 2 },
         ],
         categoryId: 1
     }

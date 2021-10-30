@@ -128,7 +128,7 @@ function BookmarksList(props: BookmarksListProps) {
                             <TableCell>{row.description}</TableCell>
                             <TableCell>
                                 <Tags
-                                    tags={row.tags}
+                                    tags={row.groupedTags}
                                     onAdd={(tagName) => handleAddTag(row.id, tagName)}
                                     onDelete={(tagName) => handleDeleteTag(row.id, tagName)}
                                     isEditable={isActive}

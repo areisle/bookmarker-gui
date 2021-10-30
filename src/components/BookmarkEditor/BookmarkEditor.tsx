@@ -97,7 +97,7 @@ function BookmarkEditor(props: BookmarkEditorProps) {
                 url: nextBookmark.url ?? '',
                 categoryId,
                 description: nextBookmark.description,
-                tags: uniq(nextBookmark.tags?.map((tag) => tag.name))
+                tags: nextBookmark.groupedTags?.map((tag) => tag.name)
             }
         });
     }
@@ -108,7 +108,7 @@ function BookmarkEditor(props: BookmarkEditorProps) {
         }
 
         const nextTags: string[] = [];
-        nextBookmark.tags?.forEach((tag) => {
+        nextBookmark.groupedTags?.forEach((tag) => {
             if (tag.createdByCurrentUser) {
                 nextTags.push(tag.name);
             }
@@ -133,7 +133,7 @@ function BookmarkEditor(props: BookmarkEditorProps) {
         }))
     }
 
-    const handleChangeTags = (nextTags: Bookmark['tags']) => {
+    const handleChangeTags = (nextTags: Bookmark['groupedTags']) => {
         setNextBookmark((prev) => ({
             ...prev,
             tags: nextTags,
@@ -183,7 +183,7 @@ function BookmarkEditor(props: BookmarkEditorProps) {
                 <TagsEditor
                     categoryId={categoryId}
                     disabled={isDisabled}
-                    value={nextBookmark.tags}
+                    value={nextBookmark.groupedTags}
                     onChange={handleChangeTags}
                 />
                 {bookmarkId && (

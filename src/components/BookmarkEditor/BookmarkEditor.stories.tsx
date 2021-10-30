@@ -50,9 +50,9 @@ export const ExistingBookmarkWithTags: Story<BookmarkEditorProps> = {
             url: 'https://test.com/some-page-link',
             title: 'Some page title',
             id: 1,
-            tags: [
-                { name: 'tag 1', createdByCurrentUser: true },
-                { name: 'tag 2', createdByCurrentUser: false },
+            groupedTags: [
+                { name: 'tag 1', createdByCurrentUser: 1, total: 1 },
+                { name: 'tag 2', createdByCurrentUser: 0, total: 1 },
             ]
         },
         isLoading: false,

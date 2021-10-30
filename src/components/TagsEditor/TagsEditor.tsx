@@ -1,13 +1,13 @@
 import { TextField, Autocomplete, CircularProgress } from '@mui/material';
 import React, { useState } from 'react';
 import { useTags } from '../../queries';
-import { GroupedTags, useGroupedTags } from '../GroupedTags';
+import { FlippableTag } from '../FlippableTag';
 
 interface Tag {
     name: string;
-    createdByCurrentUser: boolean;
+    createdByCurrentUser: number;
     index?: number;
-    hide?: boolean;
+    total: number;
 }
 
 interface TagsEditorProps {
@@ -26,9 +26,7 @@ const defaultTags: Tag[] = [];
  * but indicate that when they match a tag to exclude not include it
  */
 function TagsEditor(props: TagsEditorProps) {
-    const { categoryId, value: ungroupedValue, onChange, disabled } = props;
-
-    const groupedValue = useGroupedTags(ungroupedValue);
+    const { categoryId, value, onChange, disabled } = props;
 
     const [inputText, setInputText] = useState('');
 
@@ -43,10 +41,25 @@ function TagsEditor(props: TagsEditorProps) {
         },
         {
             keepPreviousData: true,
-            select: (response) => response.tags.map((tag) => ({ ...tag, createdByCurrentUser: true })),
+            select: (response) => response.tags.map((tag) => ({ ...tag, createdByCurrentUser: 1, total: 1 })),
             enabled: Boolean(categoryId),
         }
     )
+
+    const handleAddExistingTag = (tagName: string) => {
+        if (!value) { return; }
+        const tagIndex = value.findIndex((tag) => tag.name === tagName);
+        const next = [
+            ...value.slice(0, tagIndex),
+            {
+                ...value[tagIndex],
+                createdByCurrentUser: 1,
+                total: value[tagIndex].total + 1,
+            },
+            ...value.slice(tagIndex + 1)
+        ];
+        onChange(next);
+    }
 
     return (
         <Autocomplete
@@ -64,7 +77,13 @@ function TagsEditor(props: TagsEditorProps) {
                 }
 
                 if (reason === 'createOption' && details?.option) {
-                    onChange([...ungroupedValue ?? [], { name: (details.option as unknown as string).toLowerCase(), createdByCurrentUser: true }]);
+                    const newTag: Tag = {
+                        name: (details.option as unknown as string).toLowerCase(),
+                        createdByCurrentUser: 1,
+                        total: 1
+                    }
+
+                    onChange([...value ?? [], newTag]);
                     return;
                 }
                 onChange(next as Tag[]);
@@ -78,7 +97,7 @@ function TagsEditor(props: TagsEditorProps) {
             fullWidth={true}
             multiple={true}
             freeSolo={true}
-            value={ungroupedValue ?? defaultTags}
+            value={value ?? defaultTags}
             renderInput={(params) => (
                 <TextField
                     {...params}
@@ -101,14 +120,18 @@ function TagsEditor(props: TagsEditorProps) {
                     }}
                 />
             )}
-            renderTags={(values_, getTagProps) => (
-                // cannot use values_ or ui doesn't update on click
-                <GroupedTags
-                    tags={groupedValue}
-                    onAdd={(name) => onChange([...ungroupedValue ?? [], { name, createdByCurrentUser: true }])}
-                    getTagProps={getTagProps}
-                    isEditable={!disabled}
-                />
+            renderTags={(values, getTagProps) => (
+                values.map((tag, index) => {
+                    return (
+                        <FlippableTag
+                            {...getTagProps?.({ index })}
+                            name={tag.name}
+                            onFlip={handleAddExistingTag}
+                            createdByCurrentUser={tag.createdByCurrentUser}
+                            isEditable={!disabled}
+                        />
+                    )
+                })
             )}
         />
     )

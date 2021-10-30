@@ -23,6 +23,7 @@ export type Bookmark = {
   categoryId: Scalars['Int'];
   createdAt: Scalars['Date'];
   description?: Maybe<Scalars['String']>;
+  groupedTags: Array<GroupedTag>;
   id: Scalars['Int'];
   modifiedAt: Scalars['Date'];
   tags: Array<Tag>;
@@ -87,6 +88,13 @@ export type CreateCategoryAliasContent = {
   canonical: Scalars['String'];
   match: Scalars['String'];
   origin: Scalars['String'];
+};
+
+export type GroupedTag = {
+  __typename?: 'GroupedTag';
+  createdByCurrentUser: Scalars['Int'];
+  name: Scalars['String'];
+  total: Scalars['Int'];
 };
 
 export type Mutation = {
@@ -321,14 +329,14 @@ export type BookmarksVariables = Exact<{
 }>;
 
 
-export type Bookmarks = { __typename?: 'Query', bookmarks: { __typename?: 'BookmarksQueryResponse', data: Array<{ __typename?: 'Bookmark', id: number, title: string, url: string, description?: string | null | undefined, createdAt: any, category: { __typename?: 'Category', id: number }, tags: Array<{ __typename?: 'Tag', createdByCurrentUser: boolean, name: string }>, aliases: Array<{ __typename?: 'BookmarkAlias', url: string }> }> } };
+export type Bookmarks = { __typename?: 'Query', bookmarks: { __typename?: 'BookmarksQueryResponse', data: Array<{ __typename?: 'Bookmark', id: number, title: string, url: string, description?: string | null | undefined, createdAt: any, category: { __typename?: 'Category', id: number }, groupedTags: Array<{ __typename?: 'GroupedTag', createdByCurrentUser: number, name: string, total: number }>, aliases: Array<{ __typename?: 'BookmarkAlias', url: string }> }> } };
 
 export type BookmarksForUrlVariables = Exact<{
   url: Scalars['String'];
 }>;
 
 
-export type BookmarksForUrl = { __typename?: 'Query', bookmarksForUrl: Array<{ __typename?: 'Bookmark', id: number, title: string, url: string, description?: string | null | undefined, createdAt: any, category: { __typename?: 'Category', id: number }, tags: Array<{ __typename?: 'Tag', name: string, createdByCurrentUser: boolean }>, aliases: Array<{ __typename?: 'BookmarkAlias', url: string }> }> };
+export type BookmarksForUrl = { __typename?: 'Query', bookmarksForUrl: Array<{ __typename?: 'Bookmark', id: number, title: string, url: string, description?: string | null | undefined, createdAt: any, category: { __typename?: 'Category', id: number }, groupedTags: Array<{ __typename?: 'GroupedTag', name: string, createdByCurrentUser: number, total: number }>, aliases: Array<{ __typename?: 'BookmarkAlias', url: string }> }> };
 
 export type AddBookmarkVariables = Exact<{
   input: CreateBookmarkContent;
@@ -476,9 +484,10 @@ export const BookmarksDocument = `
       category {
         id
       }
-      tags {
+      groupedTags {
         createdByCurrentUser
         name
+        total
       }
       aliases {
         url
@@ -512,9 +521,10 @@ export const BookmarksForUrlDocument = `
     category {
       id
     }
-    tags {
+    groupedTags {
       name
       createdByCurrentUser
+      total
     }
     aliases {
       url
