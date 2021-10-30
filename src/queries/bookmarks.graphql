@@ -12,20 +12,22 @@ query bookmarks(
         where: $bookmarksWhere
         orderBy: $bookmarksOrderBy
     ) {
-        id
-        title
-        url
-        description
-        createdAt
-        category {
+        data {
             id
-        }
-        tags {
-            createdByCurrentUser
-            name
-        }
-        aliases {
+            title
             url
+            description
+            createdAt
+            category {
+                id
+            }
+            tags {
+                createdByCurrentUser
+                name
+            }
+            aliases {
+                url
+            }
         }
     }
 }

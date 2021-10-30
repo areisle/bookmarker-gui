@@ -58,7 +58,7 @@ function BookmarksList(props: BookmarksListProps) {
         bookmarksOrderBy: [{ [orderBy]: order }]
     }, { keepPreviousData: true });
 
-    const rows = data?.bookmarks
+    const rows = data?.bookmarks.data
 
     const handleFetchMore = () => {
         setTake((prev) => prev + 20);

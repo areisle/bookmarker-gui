@@ -39,6 +39,18 @@ export type BookmarkAlias = {
   url: Scalars['String'];
 };
 
+export type BookmarksQueryResponse = {
+  __typename?: 'BookmarksQueryResponse';
+  data: Array<Bookmark>;
+  meta: PaginationInfo;
+};
+
+export type CategoriesQueryResponse = {
+  __typename?: 'CategoriesQueryResponse';
+  data: Array<Category>;
+  meta: PaginationInfo;
+};
+
 export type Category = {
   __typename?: 'Category';
   createdAt: Scalars['Date'];
@@ -87,7 +99,6 @@ export type Mutation = {
   batchUpdateHostName?: Maybe<Scalars['Void']>;
   joinCategory?: Maybe<Scalars['Void']>;
   leaveCategory?: Maybe<Scalars['Void']>;
-  login: Scalars['String'];
   removeBookmark?: Maybe<Scalars['Void']>;
   removeCategoryPatternAlias?: Maybe<Scalars['Void']>;
   removeTag?: Maybe<Scalars['Void']>;
@@ -143,12 +154,6 @@ export type MutationLeaveCategoryArgs = {
 };
 
 
-export type MutationLoginArgs = {
-  email: Scalars['String'];
-  password: Scalars['String'];
-};
-
-
 export type MutationRemoveBookmarkArgs = {
   id: Scalars['Int'];
 };
@@ -188,12 +193,20 @@ export type MutationUpdateCategoryPatternAliasArgs = {
   input: UpdateCategoryAliasContent;
 };
 
+export type PaginationInfo = {
+  __typename?: 'PaginationInfo';
+  count: Scalars['Int'];
+  skip?: Maybe<Scalars['Int']>;
+  take?: Maybe<Scalars['Int']>;
+  total: Scalars['Int'];
+};
+
 export type Query = {
   __typename?: 'Query';
   bookmark?: Maybe<Bookmark>;
-  bookmarks: Array<Bookmark>;
+  bookmarks: BookmarksQueryResponse;
   bookmarksForUrl: Array<Bookmark>;
-  categories: Array<Category>;
+  categories: CategoriesQueryResponse;
   category?: Maybe<Category>;
   isBookmarked?: Maybe<Scalars['Boolean']>;
   tags: Array<Tag>;
@@ -308,7 +321,7 @@ export type BookmarksVariables = Exact<{
 }>;
 
 
-export type Bookmarks = { __typename?: 'Query', bookmarks: Array<{ __typename?: 'Bookmark', id: number, title: string, url: string, description?: string | null | undefined, createdAt: any, category: { __typename?: 'Category', id: number }, tags: Array<{ __typename?: 'Tag', createdByCurrentUser: boolean, name: string }>, aliases: Array<{ __typename?: 'BookmarkAlias', url: string }> }> };
+export type Bookmarks = { __typename?: 'Query', bookmarks: { __typename?: 'BookmarksQueryResponse', data: Array<{ __typename?: 'Bookmark', id: number, title: string, url: string, description?: string | null | undefined, createdAt: any, category: { __typename?: 'Category', id: number }, tags: Array<{ __typename?: 'Tag', createdByCurrentUser: boolean, name: string }>, aliases: Array<{ __typename?: 'BookmarkAlias', url: string }> }> } };
 
 export type BookmarksForUrlVariables = Exact<{
   url: Scalars['String'];
@@ -316,20 +329,6 @@ export type BookmarksForUrlVariables = Exact<{
 
 
 export type BookmarksForUrl = { __typename?: 'Query', bookmarksForUrl: Array<{ __typename?: 'Bookmark', id: number, title: string, url: string, description?: string | null | undefined, createdAt: any, category: { __typename?: 'Category', id: number }, tags: Array<{ __typename?: 'Tag', name: string, createdByCurrentUser: boolean }>, aliases: Array<{ __typename?: 'BookmarkAlias', url: string }> }> };
-
-export type GetBookmarkVariables = Exact<{
-  id: Scalars['Int'];
-}>;
-
-
-export type GetBookmark = { __typename?: 'Query', bookmark?: { __typename?: 'Bookmark', title: string, url: string, description?: string | null | undefined, createdAt: any } | null | undefined };
-
-export type BookmarkTagsVariables = Exact<{
-  id: Scalars['Int'];
-}>;
-
-
-export type BookmarkTags = { __typename?: 'Query', bookmark?: { __typename?: 'Bookmark', tags: Array<{ __typename?: 'Tag', id: number, name: string, createdByCurrentUser: boolean }> } | null | undefined };
 
 export type AddBookmarkVariables = Exact<{
   input: CreateBookmarkContent;
@@ -358,7 +357,7 @@ export type CategoriesVariables = Exact<{
 }>;
 
 
-export type Categories = { __typename?: 'Query', categories: Array<{ __typename?: 'Category', id: number, name: string }> };
+export type Categories = { __typename?: 'Query', categories: { __typename?: 'CategoriesQueryResponse', data: Array<{ __typename?: 'Category', id: number, name: string }> } };
 
 export type GetCategoryVariables = Exact<{
   id: Scalars['Int'];
@@ -468,20 +467,22 @@ export const BookmarksDocument = `
     where: $bookmarksWhere
     orderBy: $bookmarksOrderBy
   ) {
-    id
-    title
-    url
-    description
-    createdAt
-    category {
+    data {
       id
-    }
-    tags {
-      createdByCurrentUser
-      name
-    }
-    aliases {
+      title
       url
+      description
+      createdAt
+      category {
+        id
+      }
+      tags {
+        createdByCurrentUser
+        name
+      }
+      aliases {
+        url
+      }
     }
   }
 }
@@ -535,55 +536,6 @@ export const useBookmarksForUrl = <
     );
 useBookmarksForUrl.getKey = (variables: BookmarksForUrlVariables) => ['bookmarksForUrl', variables];
 
-export const GetBookmarkDocument = `
-    query getBookmark($id: Int!) {
-  bookmark(id: $id) {
-    title
-    url
-    description
-    createdAt
-  }
-}
-    `;
-export const useGetBookmark = <
-      TData = GetBookmark,
-      TError = Error
-    >(
-      variables: GetBookmarkVariables, 
-      options?: UseQueryOptions<GetBookmark, TError, TData>
-    ) => 
-    useQuery<GetBookmark, TError, TData>(
-      ['getBookmark', variables],
-      useAuthenticatedFetcher<GetBookmark, GetBookmarkVariables>(GetBookmarkDocument).bind(null, variables),
-      options
-    );
-useGetBookmark.getKey = (variables: GetBookmarkVariables) => ['getBookmark', variables];
-
-export const BookmarkTagsDocument = `
-    query bookmarkTags($id: Int!) {
-  bookmark(id: $id) {
-    tags {
-      id
-      name
-      createdByCurrentUser
-    }
-  }
-}
-    `;
-export const useBookmarkTags = <
-      TData = BookmarkTags,
-      TError = Error
-    >(
-      variables: BookmarkTagsVariables, 
-      options?: UseQueryOptions<BookmarkTags, TError, TData>
-    ) => 
-    useQuery<BookmarkTags, TError, TData>(
-      ['bookmarkTags', variables],
-      useAuthenticatedFetcher<BookmarkTags, BookmarkTagsVariables>(BookmarkTagsDocument).bind(null, variables),
-      options
-    );
-useBookmarkTags.getKey = (variables: BookmarkTagsVariables) => ['bookmarkTags', variables];
-
 export const AddBookmarkDocument = `
     mutation addBookmark($input: CreateBookmarkContent!) {
   addBookmark(input: $input) {
@@ -628,8 +580,10 @@ export const useUpdateBookmark = <
 export const CategoriesDocument = `
     query categories($activeOnly: Boolean) {
   categories(activeOnly: $activeOnly) {
-    id
-    name
+    data {
+      id
+      name
+    }
   }
 }
     `;

@@ -14,7 +14,7 @@ function CategorySelect(props: CategorySelectProps) {
 
     const { data, isLoading, error } = useCategories(
         { activeOnly: true },
-        { select: (response) => response.categories, keepPreviousData: true }
+        { select: (response) => response.categories.data, keepPreviousData: true }
     );
 
     return (
