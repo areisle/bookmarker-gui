@@ -50,25 +50,6 @@ query bookmarksForUrl($url: String!) {
     }
 }
 
-query getBookmark($id: Int!) {
-    bookmark(id: $id) {
-        title
-        url
-        description
-        createdAt
-    }
-}
-
-query bookmarkTags($id: Int!) {
-    bookmark(id: $id) {
-        tags {
-            id
-            name
-            createdByCurrentUser
-        }
-    }
-}
-
 mutation addBookmark($input: CreateBookmarkContent!) {
     addBookmark(input: $input) {
         id
