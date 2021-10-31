@@ -98,13 +98,14 @@ function BookmarksList(props: BookmarksListProps) {
         if (search) {
             filters.push({
                 OR: [
-                    { title: { contains: search } },
-                    { url: { contains: search } },
+                    { title: { contains: search, mode: 'insensitive' } },
+                    { url: { contains: search, mode: 'insensitive' } },
                     {
                         aliases: {
                             some: {
                                 url: {
-                                    contains: search
+                                    contains: search,
+                                    mode: 'insensitive',
                                 }
                             }
                         }
