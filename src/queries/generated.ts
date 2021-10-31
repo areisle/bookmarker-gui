@@ -330,7 +330,7 @@ export type BookmarksVariables = Exact<{
 }>;
 
 
-export type Bookmarks = { __typename?: 'Query', bookmarks: { __typename?: 'BookmarksQueryResponse', data: Array<{ __typename?: 'Bookmark', id: number, title: string, url: string, description?: string | null | undefined, createdAt: any, category: { __typename?: 'Category', id: number }, groupedTags: Array<{ __typename?: 'GroupedTag', createdByCurrentUser: number, name: string, total: number }>, aliases: Array<{ __typename?: 'BookmarkAlias', url: string }> }>, meta: { __typename?: 'PaginationInfo', total: number, count: number } } };
+export type Bookmarks = { __typename?: 'Query', bookmarks: { __typename?: 'BookmarksQueryResponse', data: Array<{ __typename?: 'Bookmark', id: number, title: string, url: string, description?: string | null | undefined, createdAt: any, category: { __typename?: 'Category', id: number }, groupedTags: Array<{ __typename?: 'GroupedTag', createdByCurrentUser: number, name: string, total: number }>, aliases: Array<{ __typename?: 'BookmarkAlias', url: string }> }>, meta: { __typename?: 'PaginationInfo', total: number, count: number, take?: number | null | undefined, skip?: number | null | undefined } } };
 
 export type BookmarksForUrlVariables = Exact<{
   url: Scalars['String'];
@@ -497,6 +497,8 @@ export const BookmarksDocument = `
     meta {
       total
       count
+      take
+      skip
     }
   }
 }

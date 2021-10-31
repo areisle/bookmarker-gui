@@ -33,6 +33,8 @@ query bookmarks(
         meta {
             total
             count
+            take
+            skip
         }
     }
 }

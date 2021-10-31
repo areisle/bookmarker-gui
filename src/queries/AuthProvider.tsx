@@ -108,7 +108,7 @@ const useAuth = () => {
     return auth;
 }
 
-const useAuthenticatedFetcher = <TData, TVariables>(query: string): (() => Promise<TData>) => {
+const useAuthenticatedFetcher = <TData, TVariables>(query: string): ((variables?: TVariables) => Promise<TData>) => {
     const auth = useAuth();
 
     return async (variables?: TVariables) => {

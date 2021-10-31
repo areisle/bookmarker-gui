@@ -1,7 +1,7 @@
 import { Button, Link, Table, TableBody, TableCell, TableRow, TextField, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import React, { ReactNode, useLayoutEffect, useMemo, useState } from 'react';
-import { useAddTag, useBookmarks, useRemoveTag } from '../../queries';
+import { Bookmark, useAddTag, useInfiniteBookmarks, useRemoveTag } from '../../queries';
 import { BookmarkEditorDialogButton } from '../BookmarkEditor';
 import { RelativeDate } from '../RelativeDate';
 import { TagsFilter } from '../TagsFilter';
@@ -14,6 +14,50 @@ interface BookmarksListProps {
     isActive: boolean;
 }
 
+interface RowProps {
+    row: Bookmark;
+    isEditable: boolean;
+    onFinishedEditing: () => void;
+    onAddTag: (id: number, name: string) => void;
+    onDeleteTag: (id: number, name: string) => void;
+}
+
+function Row(props: RowProps) {
+    const { row, isEditable, onAddTag, onDeleteTag, onFinishedEditing } = props;
+    return (
+        <TableRow
+            key={row.id}
+            hover
+            tabIndex={-1}
+        >
+            <TableCell>
+                <Link href={row.url} title={row.url}>{row.title}</Link>
+            </TableCell>
+            <TableCell>
+                {row.aliases.length || null}
+            </TableCell>
+            <TableCell><RelativeDate>{row.createdAt}</RelativeDate></TableCell>
+            <TableCell>{row.description}</TableCell>
+            <TableCell>
+                <Tags
+                    tags={row.groupedTags}
+                    onAdd={(tagName) => onAddTag(row.id, tagName)}
+                    onDelete={(tagName) => onDeleteTag(row.id, tagName)}
+                    isEditable={isEditable}
+                />
+            </TableCell>
+            {isEditable && (
+                <TableCell padding='none'>
+                    <BookmarkEditorDialogButton
+                        bookmark={row}
+                        onSuccess={onFinishedEditing}
+                    />
+                </TableCell>
+            )}
+        </TableRow>
+    )
+}
+
 /**
  * @todo format dates
  */
@@ -21,7 +65,6 @@ function BookmarksList(props: BookmarksListProps) {
     const { category, isActive } = props;
     const [order, setOrder] = useState<'asc' | 'desc'>('desc');
     const [orderBy, setOrderBy] = useState('createdAt');
-    const [take, setTake] = useState(10);
     const [tagFilters, setTagFilters] = useFilterTags(category);
     const [search, setSearch] = useState('');
 
@@ -75,18 +118,22 @@ function BookmarksList(props: BookmarksListProps) {
         }
     }, [tagFilters, search]);
 
-    const { data, isLoading: loading, error, refetch: refetchBookmarks, ...rest } = useBookmarks({
+    const {
+        data,
+        isLoading: loading,
+        error,
+        hasNextPage,
+        refetch: refetchBookmarks,
+        fetchNextPage,
+    } = useInfiniteBookmarks({
         categoryId: category,
-        skip: 0,
-        take: take,
         where: bookmarkWhere,
-        orderBy: [{ [orderBy]: order }]
-    }, { keepPreviousData: true });
-
-    const rows = data?.bookmarks.data
+        orderBy: [{ [orderBy]: order }],
+        take: 20,
+    });
 
     const handleFetchMore = () => {
-        setTake((prev) => prev + 20);
+        fetchNextPage();
     }
 
     const { mutate: addTag } = useAddTag({
@@ -96,13 +143,32 @@ function BookmarksList(props: BookmarksListProps) {
         onSuccess: () => refetchBookmarks()
     });
 
-    const handleAddTag = (bookmarkId: number, tagName: string) => {
-        addTag({ bookmarkId, name: tagName })
-    }
+    const { rows, count, total } = useMemo(() => {
+        let nextCount = 0;
+        let nextRows: ReactNode[] = [];
 
-    const handleDeleteTag = (bookmarkId: number, tagName: string) => {
-        removeTag({ bookmarkId, name: tagName })
-    }
+        data?.pages.forEach((group, i) => {
+            nextCount += (group.meta.count ?? 0);
+            group.data.forEach((row) => {
+                nextRows.push(
+                    <Row
+                        key={row.id}
+                        row={row}
+                        onAddTag={(bookmarkId, name) => addTag({ bookmarkId, name })}
+                        onDeleteTag={(bookmarkId, name) => removeTag({ bookmarkId, name })}
+                        onFinishedEditing={refetchBookmarks}
+                        isEditable={isActive}
+                    />
+                );
+            })
+        })
+
+        return {
+            rows: nextRows,
+            count: nextCount,
+            total: data?.pages[0].meta.total
+        }
+    }, [data, isActive, addTag, removeTag, refetchBookmarks]);
 
     let helperText: ReactNode;
 
@@ -113,8 +179,6 @@ function BookmarksList(props: BookmarksListProps) {
     } else if (!rows?.length) {
         helperText = <Typography>No bookmarks to show.</Typography>
     }
-
-    const meta = data?.bookmarks.meta;
 
     return (
         <Box sx={{ position: 'relative' }}>
@@ -129,16 +193,14 @@ function BookmarksList(props: BookmarksListProps) {
                 value={tagFilters}
                 onChange={setTagFilters}
             />
-            {meta && (
-                <Typography
-                    variant='caption'
-                    align='right'
-                    component='p'
-                    sx={{ p: 0.5 }}
-                >
-                    showing {meta.count} of {meta.total}
-                </Typography>
-            )}
+            <Typography
+                variant='caption'
+                align='right'
+                component='p'
+                sx={{ p: 0.5 }}
+            >
+                showing {count ?? '?'} of {total ?? '?'}
+            </Typography>
             <Table stickyHeader>
                 <Header
                     order={order}
@@ -155,41 +217,10 @@ function BookmarksList(props: BookmarksListProps) {
                             <TableCell colSpan={4}>{helperText}</TableCell>
                         </TableRow>
                     )}
-                    {rows?.map((row) => (
-                        <TableRow
-                            key={row.id}
-                            hover
-                            tabIndex={-1}
-                        >
-                            <TableCell>
-                                <Link href={row.url} title={row.url}>{row.title}</Link>
-                            </TableCell>
-                            <TableCell>
-                                {row.aliases.length || null}
-                            </TableCell>
-                            <TableCell><RelativeDate>{row.createdAt}</RelativeDate></TableCell>
-                            <TableCell>{row.description}</TableCell>
-                            <TableCell>
-                                <Tags
-                                    tags={row.groupedTags}
-                                    onAdd={(tagName) => handleAddTag(row.id, tagName)}
-                                    onDelete={(tagName) => handleDeleteTag(row.id, tagName)}
-                                    isEditable={isActive}
-                                />
-                            </TableCell>
-                            {isActive && (
-                                <TableCell padding='none'>
-                                    <BookmarkEditorDialogButton
-                                        bookmark={row}
-                                        onSuccess={refetchBookmarks}
-                                    />
-                                </TableCell>
-                            )}
-                        </TableRow>
-                    ))}
+                    {rows}
                 </TableBody>
             </Table>
-            <Button onClick={handleFetchMore} sx={{ margin: 1 }} disabled={(rows?.length ?? 0) < take}>Load More</Button>
+            <Button onClick={handleFetchMore} sx={{ margin: 1 }} disabled={!hasNextPage}>Load More</Button>
         </Box>
     );
 }
