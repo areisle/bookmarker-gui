@@ -1,7 +1,7 @@
 {
-    "name": "bookmarks-no-base",
-    "version": "1.0.0",
-    "description": "",
+    "name": "bookmarker",
+    "version": "0.2.0",
+    "description": "chrome extension for shared bookmarks with other users",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "start": "webpack serve --mode development",
@@ -12,7 +12,7 @@
         "build-storybook": "build-storybook",
         "generate-types": "graphql-codegen --config codegen.yml"
     },
-    "author": "",
+    "author": "areisle@gmail.com",
     "license": "ISC",
     "devDependencies": {
         "@babel/core": "^7.15.5",
