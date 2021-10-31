@@ -3,6 +3,7 @@ query categories($activeOnly: Boolean) {
         data {
             id
             name
+            bookmarksCount
         }
     }
 }

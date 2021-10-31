@@ -30,6 +30,10 @@ query bookmarks(
                 url
             }
         }
+        meta {
+            total
+            count
+        }
     }
 }
 
