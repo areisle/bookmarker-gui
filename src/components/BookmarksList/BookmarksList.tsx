@@ -57,6 +57,15 @@ function BookmarksList(props: BookmarksListProps) {
                 OR: [
                     { title: { contains: search } },
                     { url: { contains: search } },
+                    {
+                        aliases: {
+                            some: {
+                                url: {
+                                    contains: search
+                                }
+                            }
+                        }
+                    }
                 ]
             })
         }
