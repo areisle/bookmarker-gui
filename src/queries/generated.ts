@@ -323,10 +323,10 @@ export type UserCategory = {
 
 export type BookmarksVariables = Exact<{
   categoryId: Scalars['Int'];
-  bookmarksSkip?: Maybe<Scalars['Int']>;
-  bookmarksTake?: Maybe<Scalars['Int']>;
-  bookmarksWhere?: Maybe<Scalars['JSON']>;
-  bookmarksOrderBy?: Maybe<Scalars['JSON']>;
+  skip?: Maybe<Scalars['Int']>;
+  take?: Maybe<Scalars['Int']>;
+  where?: Maybe<Scalars['JSON']>;
+  orderBy?: Maybe<Scalars['JSON']>;
 }>;
 
 
@@ -468,13 +468,13 @@ export type RemoveUser = { __typename?: 'Mutation', removeUser?: any | null | un
 
 
 export const BookmarksDocument = `
-    query bookmarks($categoryId: Int!, $bookmarksSkip: Int, $bookmarksTake: Int, $bookmarksWhere: JSON, $bookmarksOrderBy: JSON) {
+    query bookmarks($categoryId: Int!, $skip: Int, $take: Int, $where: JSON, $orderBy: JSON) {
   bookmarks(
     categoryId: $categoryId
-    skip: $bookmarksSkip
-    take: $bookmarksTake
-    where: $bookmarksWhere
-    orderBy: $bookmarksOrderBy
+    skip: $skip
+    take: $take
+    where: $where
+    orderBy: $orderBy
   ) {
     data {
       id

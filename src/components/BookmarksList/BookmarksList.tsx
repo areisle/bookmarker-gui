@@ -77,10 +77,10 @@ function BookmarksList(props: BookmarksListProps) {
 
     const { data, isLoading: loading, error, refetch: refetchBookmarks, ...rest } = useBookmarks({
         categoryId: category,
-        bookmarksSkip: 0,
-        bookmarksTake: take,
-        bookmarksWhere: bookmarkWhere,
-        bookmarksOrderBy: [{ [orderBy]: order }]
+        skip: 0,
+        take: take,
+        where: bookmarkWhere,
+        orderBy: [{ [orderBy]: order }]
     }, { keepPreviousData: true });
 
     const rows = data?.bookmarks.data
