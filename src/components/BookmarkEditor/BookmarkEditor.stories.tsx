@@ -12,10 +12,12 @@ export default {
     title: 'components/BookmarkEditor',
 } as Meta;
 
+const categoryId = 3;
+
 export const NewBookmark: Story<BookmarkEditorProps> = {
     args: {
         bookmark: {
-            category: { id: 1 },
+            category: { id: categoryId },
             url: 'https://test.com/some-page-link',
             title: 'Some page title'
         },
@@ -25,7 +27,7 @@ export const NewBookmark: Story<BookmarkEditorProps> = {
 export const LoadingBookmark: Story<BookmarkEditorProps> = {
     args: {
         bookmark: {
-            category: { id: 1 },
+            category: { id: categoryId },
         },
         isLoading: true,
     }
@@ -34,7 +36,7 @@ export const LoadingBookmark: Story<BookmarkEditorProps> = {
 export const ExistingBookmark: Story<BookmarkEditorProps> = {
     args: {
         bookmark: {
-            category: { id: 1 },
+            category: { id: categoryId },
             url: 'https://test.com/some-page-link',
             title: 'Some page title',
             id: 1
@@ -46,7 +48,7 @@ export const ExistingBookmark: Story<BookmarkEditorProps> = {
 export const ExistingBookmarkWithTags: Story<BookmarkEditorProps> = {
     args: {
         bookmark: {
-            category: { id: 1 },
+            category: { id: categoryId },
             url: 'https://test.com/some-page-link',
             title: 'Some page title',
             id: 1,
@@ -62,7 +64,7 @@ export const ExistingBookmarkWithTags: Story<BookmarkEditorProps> = {
 export const UpdatingBookmarkInProgress: Story<BookmarkEditorProps> = {
     args: {
         bookmark: {
-            category: { id: 1 },
+            category: { id: categoryId },
             url: 'https://test.com/some-page-link',
             title: 'Some page title',
             id: 1
@@ -75,7 +77,7 @@ export const UpdatingBookmarkInProgress: Story<BookmarkEditorProps> = {
 export const AddingBookmarkInProgress: Story<BookmarkEditorProps> = {
     args: {
         bookmark: {
-            category: { id: 1 },
+            category: { id: categoryId },
             url: 'https://test.com/some-page-link',
             title: 'Some page title',
         },
@@ -87,7 +89,7 @@ export const AddingBookmarkInProgress: Story<BookmarkEditorProps> = {
 export const RemovingBookmarkInProgress: Story<BookmarkEditorProps> = {
     args: {
         bookmark: {
-            category: { id: 1 },
+            category: { id: categoryId },
             url: 'https://test.com/some-page-link',
             title: 'Some page title',
             id: 1

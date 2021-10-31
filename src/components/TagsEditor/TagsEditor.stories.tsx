@@ -12,10 +12,12 @@ export default {
     }
 } as Meta;
 
+const categoryId = 3;
+
 export const NoTags: Story<TagsEditorProps> = {
     args: {
         value: [],
-        categoryId: 1
+        categoryId
     }
 }
 
@@ -25,7 +27,7 @@ export const TagsByCurrentUser: Story<TagsEditorProps> = {
             { name: 'historical', createdByCurrentUser: 1, total: 1 },
             { name: 'funny', createdByCurrentUser: 1, total: 1 }
         ],
-        categoryId: 1
+        categoryId
     }
 }
 
@@ -35,7 +37,7 @@ export const TagsByOtherUser: Story<TagsEditorProps> = {
             { name: 'historical', createdByCurrentUser: 0, total: 1 },
             { name: 'funny', createdByCurrentUser: 0, total: 1 }
         ],
-        categoryId: 1
+        categoryId
     }
 }
 
@@ -45,7 +47,7 @@ export const TagsByMultipleUsers: Story<TagsEditorProps> = {
             { name: 'historical', createdByCurrentUser: 1, total: 2 },
             { name: 'funny', createdByCurrentUser: 0, total: 1 }
         ],
-        categoryId: 1
+        categoryId
     }
 }
 
@@ -55,6 +57,6 @@ export const ManyTagsByMultipleUsers: Story<TagsEditorProps> = {
             { name: 'historical', createdByCurrentUser: 1, total: 2 },
             { name: 'funny', createdByCurrentUser: 1, total: 2 },
         ],
-        categoryId: 1
+        categoryId
     }
 }
