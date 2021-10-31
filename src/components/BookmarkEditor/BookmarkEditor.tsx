@@ -136,7 +136,7 @@ function BookmarkEditor(props: BookmarkEditorProps) {
     const handleChangeTags = (nextTags: Bookmark['groupedTags']) => {
         setNextBookmark((prev) => ({
             ...prev,
-            tags: nextTags,
+            groupedTags: nextTags,
         }))
     }
 
