@@ -54,6 +54,7 @@ export type CategoriesQueryResponse = {
 
 export type Category = {
   __typename?: 'Category';
+  bookmarksCount: Scalars['Int'];
   createdAt: Scalars['Date'];
   id: Scalars['Int'];
   isActive: Scalars['Boolean'];
@@ -329,7 +330,7 @@ export type BookmarksVariables = Exact<{
 }>;
 
 
-export type Bookmarks = { __typename?: 'Query', bookmarks: { __typename?: 'BookmarksQueryResponse', data: Array<{ __typename?: 'Bookmark', id: number, title: string, url: string, description?: string | null | undefined, createdAt: any, category: { __typename?: 'Category', id: number }, groupedTags: Array<{ __typename?: 'GroupedTag', createdByCurrentUser: number, name: string, total: number }>, aliases: Array<{ __typename?: 'BookmarkAlias', url: string }> }> } };
+export type Bookmarks = { __typename?: 'Query', bookmarks: { __typename?: 'BookmarksQueryResponse', data: Array<{ __typename?: 'Bookmark', id: number, title: string, url: string, description?: string | null | undefined, createdAt: any, category: { __typename?: 'Category', id: number }, groupedTags: Array<{ __typename?: 'GroupedTag', createdByCurrentUser: number, name: string, total: number }>, aliases: Array<{ __typename?: 'BookmarkAlias', url: string }> }>, meta: { __typename?: 'PaginationInfo', total: number, count: number } } };
 
 export type BookmarksForUrlVariables = Exact<{
   url: Scalars['String'];
@@ -365,7 +366,7 @@ export type CategoriesVariables = Exact<{
 }>;
 
 
-export type Categories = { __typename?: 'Query', categories: { __typename?: 'CategoriesQueryResponse', data: Array<{ __typename?: 'Category', id: number, name: string }> } };
+export type Categories = { __typename?: 'Query', categories: { __typename?: 'CategoriesQueryResponse', data: Array<{ __typename?: 'Category', id: number, name: string, bookmarksCount: number }> } };
 
 export type GetCategoryVariables = Exact<{
   id: Scalars['Int'];
@@ -493,6 +494,10 @@ export const BookmarksDocument = `
         url
       }
     }
+    meta {
+      total
+      count
+    }
   }
 }
     `;
@@ -593,6 +598,7 @@ export const CategoriesDocument = `
     data {
       id
       name
+      bookmarksCount
     }
   }
 }

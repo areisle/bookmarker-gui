@@ -105,6 +105,8 @@ function BookmarksList(props: BookmarksListProps) {
         helperText = <Typography>No bookmarks to show.</Typography>
     }
 
+    const meta = data?.bookmarks.meta;
+
     return (
         <Box sx={{ position: 'relative' }}>
             <TextField
@@ -118,6 +120,16 @@ function BookmarksList(props: BookmarksListProps) {
                 value={tagFilters}
                 onChange={setTagFilters}
             />
+            {meta && (
+                <Typography
+                    variant='caption'
+                    align='right'
+                    component='p'
+                    sx={{ p: 0.5 }}
+                >
+                    showing {meta.count} of {meta.total}
+                </Typography>
+            )}
             <Table stickyHeader>
                 <Header
                     order={order}
