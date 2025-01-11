@@ -7,7 +7,7 @@ import { CustomThemeProvider } from "./theme"
 
 function PopupPage() {
     return (
-        <span>
+        <div style={{ minWidth: 120, minHeight: 120 }}>
             <CustomThemeProvider>
                 <AuthenticatedQueryProvider isPopup={true}>
                     <PageMetaProvider>
@@ -15,7 +15,7 @@ function PopupPage() {
                     </PageMetaProvider>
                 </AuthenticatedQueryProvider>
             </CustomThemeProvider>
-        </span>
+        </div>
     )
 }
 
