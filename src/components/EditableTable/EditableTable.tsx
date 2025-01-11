@@ -57,9 +57,6 @@ interface EditableTableProps<R extends Row = Row> {
      * must be referentially stable for editing
      */
     rows: R[] | undefined;
-    isEditable?: boolean;
-    isDeletable?: boolean;
-    isCreatable?: boolean;
     isLoading?: boolean;
     isSaving?: boolean;
     isDeleting?: boolean;
@@ -76,10 +73,7 @@ function EditableTable<R extends Row>(props: EditableTableProps<R>) {
     const {
         columns,
         rows,
-        isEditable,
         isLoading,
-        isDeletable,
-        isCreatable,
         onDelete,
         onSave,
         onAdd,
@@ -87,8 +81,6 @@ function EditableTable<R extends Row>(props: EditableTableProps<R>) {
     } = props;
 
     const [rowForEditing, setRowForEditing] = useState<R | null>(null);
-
-    const showActionsColumn = isEditable || isCreatable || isDeletable;
 
     useEffect(() => {
         setRowForEditing(null);
@@ -125,9 +117,7 @@ function EditableTable<R extends Row>(props: EditableTableProps<R>) {
                                 {column.label ?? column.field}
                             </TableCell>
                         ))}
-                        {showActionsColumn && (
-                            <TableCell padding='none' sx={{ width: '120px' }}></TableCell>
-                        )}
+                        <TableCell padding='none' sx={{ width: '120px' }}></TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -184,69 +174,61 @@ function EditableTable<R extends Row>(props: EditableTableProps<R>) {
 
                                     return <TableCell key={field}>{String(value ?? '')}</TableCell>
                                 })}
-                                {showActionsColumn && (
-                                    <TableCell padding='none'>
-                                        {(isEditingRow || isCreatingRow) && (
-                                            <Box display='inline-flex' gap={0.5}>
-                                                <Button
-                                                    onClick={() => (isCreatingRow ? onAdd : onSave)?.(rowForEditing!)}
-                                                    size='small'
-                                                >
-                                                    {isCreatingRow ? 'Add' : 'Save'}
-                                                </Button>
-                                                <Button
-                                                    onClick={() => setRowForEditing(null)}
-                                                    color='error'
-                                                    size='small'
-                                                >
-                                                    Cancel
-                                                </Button>
-                                            </Box>
-                                        )}
-                                        {!(isEditingRow || isCreatingRow) && (
-                                            <>
-                                                {isEditable && (
-                                                    <IconButton
-                                                        onClick={() => setRowForEditing({ ...row })}
-                                                        aria-label='edit row'
-                                                    >
-                                                        <Edit />
-                                                    </IconButton>
-                                                )}
-                                                {isDeletable && (
-                                                    <ConfirmButton
-                                                        onClick={() => onDelete?.(row)}
-                                                        confirmText='Confirm delete row?'
-                                                        icon={true}
-                                                        aria-label='delete row'
-                                                    >
-                                                        <Delete />
-                                                    </ConfirmButton>
-                                                )}
-                                            </>
-                                        )}
-                                    </TableCell>
-                                )}
+                                <TableCell padding='none'>
+                                    {(isEditingRow || isCreatingRow) && (
+                                        <Box display='inline-flex' gap={0.5}>
+                                            <Button
+                                                onClick={() => (isCreatingRow ? onAdd : onSave)?.(rowForEditing!)}
+                                                size='small'
+                                            >
+                                                {isCreatingRow ? 'Add' : 'Save'}
+                                            </Button>
+                                            <Button
+                                                onClick={() => setRowForEditing(null)}
+                                                color='error'
+                                                size='small'
+                                            >
+                                                Cancel
+                                            </Button>
+                                        </Box>
+                                    )}
+                                    {!(isEditingRow || isCreatingRow) && (
+                                        <>
+                                            <IconButton
+                                                onClick={() => setRowForEditing({ ...row })}
+                                                aria-label='edit row'
+                                            >
+                                                <Edit />
+                                            </IconButton>
+                                            <ConfirmButton
+                                                onClick={() => onDelete?.(row)}
+                                                confirmText='Confirm delete row?'
+                                                icon={true}
+                                                aria-label='delete row'
+                                            >
+                                                <Delete />
+                                            </ConfirmButton>
+                                        </>
+                                    )}
+                                </TableCell>
                             </TableRow>
                         )
                     })}
                     {(!rows?.length && !isLoading) && (
                         <TableRow>
-                            <TableCell colSpan={columns.length + (showActionsColumn ? 1 : 0)}>
+                            <TableCell colSpan={columns.length + 1}>
                                 No rows to show.
                             </TableCell>
                         </TableRow>
                     )}
                 </TableBody>
             </Table>
-            {isCreatable && (
-                <Button
-                    sx={{ alignSelf: 'start' }}
-                    onClick={() => setRowForEditing({ id: undefined } as R)}
-                >
-                    {addButtonLabel}
-                </Button>
-            )}
+            <Button
+                sx={{ alignSelf: 'start' }}
+                onClick={() => setRowForEditing({ id: undefined } as R)}
+            >
+                {addButtonLabel}
+            </Button>
         </Stack>
     )
 }

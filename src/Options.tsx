@@ -1,5 +1,5 @@
 import React from "react"
-import ReactDom from "react-dom"
+import { createRoot } from 'react-dom/client';
 import { OptionsPage } from "./pages/OptionsPage"
 import { AuthenticatedQueryProvider } from "./queries"
 import { CustomThemeProvider } from "./theme"
@@ -16,4 +16,7 @@ function Options() {
     )
 }
 
-ReactDom.render(<Options />, document.getElementById('root'))
+
+const container = document.getElementById('root');
+const root = createRoot(container!);
+root.render(<Options />)

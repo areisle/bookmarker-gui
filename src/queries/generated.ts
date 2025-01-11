@@ -1,6 +1,7 @@
-import { useQuery, UseQueryOptions, useMutation, UseMutationOptions } from 'react-query';
+import { useQuery, useMutation, UseQueryOptions, UseMutationOptions } from '@tanstack/react-query';
 import { useAuthenticatedFetcher } from './AuthProvider';
 export type Maybe<T> = T | null;
+export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
@@ -16,190 +17,122 @@ export type Scalars = {
   Void: any;
 };
 
-export type Bookmark = {
-  __typename?: 'Bookmark';
-  aliases: Array<BookmarkAlias>;
-  category: Category;
-  categoryId: Scalars['Int'];
+export type Activity = {
+  __typename?: 'Activity';
   createdAt: Scalars['Date'];
-  description?: Maybe<Scalars['String']>;
+  createdBy: User;
+  createdById: Scalars['Int'];
+  drama?: Maybe<Drama>;
+  dramaId?: Maybe<Scalars['Int']>;
+  id: Scalars['Int'];
+  message: Scalars['String'];
+};
+
+export type ActivityQueryResponse = {
+  __typename?: 'ActivityQueryResponse';
+  data: Array<Activity>;
+  meta: PaginationInfo;
+};
+
+export type CreateDramaContent = {
+  country?: InputMaybe<Scalars['String']>;
+  description?: InputMaybe<Scalars['String']>;
+  episodeCount?: InputMaybe<Scalars['Int']>;
+  episodeDuration?: InputMaybe<Scalars['Int']>;
+  finishedAiringAt?: InputMaybe<Scalars['Date']>;
+  links?: InputMaybe<Array<Scalars['String']>>;
+  startedAiringAt?: InputMaybe<Scalars['Date']>;
+  status?: InputMaybe<Scalars['String']>;
+  tags?: InputMaybe<Array<Scalars['String']>>;
+  title?: InputMaybe<Scalars['String']>;
+  watched?: InputMaybe<Scalars['String']>;
+};
+
+export type CreateUserInput = {
+  admin?: InputMaybe<Scalars['Boolean']>;
+  email: Scalars['String'];
+};
+
+export type Drama = {
+  __typename?: 'Drama';
+  country?: Maybe<Scalars['String']>;
+  createdAt: Scalars['Date'];
+  createdBy: User;
+  createdById: Scalars['Int'];
+  currentUserWatched?: Maybe<Scalars['String']>;
+  description: Scalars['String'];
+  episodeCount?: Maybe<Scalars['Int']>;
+  episodeDuration?: Maybe<Scalars['Int']>;
+  finishedAiringAt?: Maybe<Scalars['Date']>;
   groupedTags: Array<GroupedTag>;
   id: Scalars['Int'];
-  modifiedAt: Scalars['Date'];
+  lastModifiedAt: Scalars['Date'];
+  lastModifiedBy: User;
+  lastModifiedById: Scalars['Int'];
+  links: Array<Link>;
+  startedAiringAt?: Maybe<Scalars['Date']>;
+  status: Scalars['String'];
   tags: Array<Tag>;
   title: Scalars['String'];
-  url: Scalars['String'];
+  watched: Array<Watched>;
 };
 
-export type BookmarkAlias = {
-  __typename?: 'BookmarkAlias';
-  bookmark: Bookmark;
-  createdAt: Scalars['Date'];
-  id: Scalars['Int'];
-  modifiedAt: Scalars['Date'];
-  url: Scalars['String'];
-};
-
-export type BookmarksQueryResponse = {
-  __typename?: 'BookmarksQueryResponse';
-  data: Array<Bookmark>;
+export type DramasQueryResponse = {
+  __typename?: 'DramasQueryResponse';
+  data: Array<Drama>;
   meta: PaginationInfo;
-};
-
-export type CategoriesQueryResponse = {
-  __typename?: 'CategoriesQueryResponse';
-  data: Array<Category>;
-  meta: PaginationInfo;
-};
-
-export type Category = {
-  __typename?: 'Category';
-  bookmarksCount: Scalars['Int'];
-  createdAt: Scalars['Date'];
-  id: Scalars['Int'];
-  isActive: Scalars['Boolean'];
-  isAdmin: Scalars['Boolean'];
-  modifiedAt: Scalars['Date'];
-  name: Scalars['String'];
-  rules: Array<CategoryPatternAlias>;
-  users: Array<UserCategory>;
-};
-
-export type CategoryPatternAlias = {
-  __typename?: 'CategoryPatternAlias';
-  canonical: Scalars['String'];
-  category: Category;
-  categoryId: Scalars['Int'];
-  createdAt: Scalars['Date'];
-  id: Scalars['Int'];
-  match: Scalars['String'];
-  modifiedAt: Scalars['Date'];
-  origin: Scalars['String'];
-};
-
-export type CreateBookmarkContent = {
-  categoryId: Scalars['Int'];
-  description?: Maybe<Scalars['String']>;
-  tags?: Maybe<Array<Scalars['String']>>;
-  title: Scalars['String'];
-  url: Scalars['String'];
-};
-
-export type CreateCategoryAliasContent = {
-  canonical: Scalars['String'];
-  match: Scalars['String'];
-  origin: Scalars['String'];
 };
 
 export type GroupedTag = {
   __typename?: 'GroupedTag';
-  createdByCurrentUser: Scalars['Int'];
+  count: Scalars['Int'];
+  current: Scalars['Boolean'];
   name: Scalars['String'];
-  total: Scalars['Int'];
+};
+
+export type Link = {
+  __typename?: 'Link';
+  createdAt: Scalars['Date'];
+  createdBy: User;
+  createdById: Scalars['Int'];
+  id: Scalars['Int'];
+  title: Scalars['String'];
+  url: Scalars['String'];
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
-  addBookmark?: Maybe<Bookmark>;
-  addCategory?: Maybe<Category>;
-  addCategoryPatternAlias?: Maybe<Scalars['Void']>;
-  addTag?: Maybe<Scalars['Void']>;
-  addUsers?: Maybe<Scalars['Void']>;
-  batchUpdateHostName?: Maybe<Scalars['Void']>;
-  joinCategory?: Maybe<Scalars['Void']>;
-  leaveCategory?: Maybe<Scalars['Void']>;
-  removeBookmark?: Maybe<Scalars['Void']>;
-  removeCategoryPatternAlias?: Maybe<Scalars['Void']>;
-  removeTag?: Maybe<Scalars['Void']>;
+  addDrama?: Maybe<Drama>;
+  addUser?: Maybe<User>;
+  removeDrama?: Maybe<Scalars['Void']>;
   removeUser?: Maybe<Scalars['Void']>;
-  updateBookmark?: Maybe<Scalars['Void']>;
-  updateCategory?: Maybe<Scalars['Void']>;
-  updateCategoryPatternAlias?: Maybe<Scalars['Void']>;
+  updateDrama?: Maybe<Scalars['Void']>;
 };
 
 
-export type MutationAddBookmarkArgs = {
-  input: CreateBookmarkContent;
+export type MutationAddDramaArgs = {
+  input: CreateDramaContent;
 };
 
 
-export type MutationAddCategoryArgs = {
-  name: Scalars['String'];
+export type MutationAddUserArgs = {
+  email: Scalars['String'];
 };
 
 
-export type MutationAddCategoryPatternAliasArgs = {
-  categoryId: Scalars['Int'];
-  input: CreateCategoryAliasContent;
-};
-
-
-export type MutationAddTagArgs = {
-  bookmarkId: Scalars['Int'];
-  name: Scalars['String'];
-};
-
-
-export type MutationAddUsersArgs = {
-  categoryId: Scalars['Int'];
-  emails: Array<Scalars['String']>;
-};
-
-
-export type MutationBatchUpdateHostNameArgs = {
-  categoryId: Scalars['Int'];
-  newName: Scalars['String'];
-  oldName: Scalars['String'];
-};
-
-
-export type MutationJoinCategoryArgs = {
+export type MutationRemoveDramaArgs = {
   id: Scalars['Int'];
-};
-
-
-export type MutationLeaveCategoryArgs = {
-  id: Scalars['Int'];
-};
-
-
-export type MutationRemoveBookmarkArgs = {
-  id: Scalars['Int'];
-};
-
-
-export type MutationRemoveCategoryPatternAliasArgs = {
-  id: Scalars['Int'];
-};
-
-
-export type MutationRemoveTagArgs = {
-  bookmarkId: Scalars['Int'];
-  name: Scalars['String'];
 };
 
 
 export type MutationRemoveUserArgs = {
-  categoryId: Scalars['Int'];
-  id: Scalars['Int'];
+  email: Scalars['String'];
 };
 
 
-export type MutationUpdateBookmarkArgs = {
-  bookmarkId: Scalars['Int'];
-  input: UpdateBookmarkContent;
-};
-
-
-export type MutationUpdateCategoryArgs = {
+export type MutationUpdateDramaArgs = {
   id: Scalars['Int'];
-  input?: Maybe<UpdateCategoryContent>;
-};
-
-
-export type MutationUpdateCategoryPatternAliasArgs = {
-  id: Scalars['Int'];
-  input: UpdateCategoryAliasContent;
+  input: CreateDramaContent;
 };
 
 export type PaginationInfo = {
@@ -212,627 +145,473 @@ export type PaginationInfo = {
 
 export type Query = {
   __typename?: 'Query';
-  bookmark?: Maybe<Bookmark>;
-  bookmarks: BookmarksQueryResponse;
-  bookmarksForUrl: Array<Bookmark>;
-  categories: CategoriesQueryResponse;
-  category?: Maybe<Category>;
-  isBookmarked?: Maybe<Scalars['Boolean']>;
+  activity: ActivityQueryResponse;
+  currentUser: User;
+  drama?: Maybe<Drama>;
+  dramas: DramasQueryResponse;
+  dump?: Maybe<Scalars['JSON']>;
+  isDramaBookmarked?: Maybe<Scalars['Int']>;
   tags: Array<Tag>;
-  users: Array<UserCategory>;
+  users: Array<User>;
 };
 
 
-export type QueryBookmarkArgs = {
+export type QueryActivityArgs = {
+  orderBy?: InputMaybe<Scalars['JSON']>;
+  skip?: InputMaybe<Scalars['Int']>;
+  take?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<Scalars['JSON']>;
+};
+
+
+export type QueryDramaArgs = {
   id: Scalars['Int'];
 };
 
 
-export type QueryBookmarksArgs = {
-  categoryId: Scalars['Int'];
-  orderBy?: Maybe<Scalars['JSON']>;
-  skip?: Maybe<Scalars['Int']>;
-  take?: Maybe<Scalars['Int']>;
-  where?: Maybe<Scalars['JSON']>;
+export type QueryDramasArgs = {
+  orderBy?: InputMaybe<Scalars['JSON']>;
+  skip?: InputMaybe<Scalars['Int']>;
+  take?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<Scalars['JSON']>;
 };
 
 
-export type QueryBookmarksForUrlArgs = {
-  url: Scalars['String'];
-};
-
-
-export type QueryCategoriesArgs = {
-  activeOnly?: Maybe<Scalars['Boolean']>;
-  skip?: Maybe<Scalars['Int']>;
-  take?: Maybe<Scalars['Int']>;
-};
-
-
-export type QueryCategoryArgs = {
-  id: Scalars['Int'];
-};
-
-
-export type QueryIsBookmarkedArgs = {
+export type QueryIsDramaBookmarkedArgs = {
   url: Scalars['String'];
 };
 
 
 export type QueryTagsArgs = {
-  categoryId: Scalars['Int'];
-  skip?: Maybe<Scalars['Int']>;
-  take?: Maybe<Scalars['Int']>;
-  where?: Maybe<Scalars['JSON']>;
-};
-
-
-export type QueryUsersArgs = {
-  categoryId: Scalars['Int'];
+  skip?: InputMaybe<Scalars['Int']>;
+  take?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<Scalars['JSON']>;
 };
 
 export type Tag = {
   __typename?: 'Tag';
-  bookmark: Bookmark;
-  category: Category;
-  categoryId: Scalars['Int'];
   createdAt: Scalars['Date'];
   createdBy: User;
-  createdByCurrentUser: Scalars['Boolean'];
+  createdByCurrentUser?: Maybe<Scalars['Boolean']>;
   createdById: Scalars['Int'];
   id: Scalars['Int'];
-  modifiedAt: Scalars['Date'];
   name: Scalars['String'];
 };
 
-export type UpdateBookmarkContent = {
-  aliases?: Maybe<Array<Scalars['String']>>;
-  description?: Maybe<Scalars['String']>;
-  tags?: Maybe<Array<Scalars['String']>>;
-  title?: Maybe<Scalars['String']>;
-  url?: Maybe<Scalars['String']>;
-};
-
-export type UpdateCategoryAliasContent = {
-  canonical?: Maybe<Scalars['String']>;
-  match?: Maybe<Scalars['String']>;
-  origin?: Maybe<Scalars['String']>;
-};
-
-export type UpdateCategoryContent = {
-  title?: Maybe<Scalars['String']>;
+export type UpdateLinkContent = {
+  url: Scalars['String'];
 };
 
 export type User = {
   __typename?: 'User';
+  admin: Scalars['Boolean'];
   createdAt: Scalars['Date'];
+  createdBy?: Maybe<User>;
+  createdById?: Maybe<Scalars['Int']>;
   email: Scalars['String'];
   id: Scalars['Int'];
   modifiedAt: Scalars['Date'];
 };
 
-export type UserCategory = {
-  __typename?: 'UserCategory';
-  active: Scalars['Boolean'];
-  admin: Scalars['Boolean'];
+export type Watched = {
+  __typename?: 'Watched';
   createdAt: Scalars['Date'];
+  createdBy: User;
+  createdById: Scalars['Int'];
   id: Scalars['Int'];
-  modifiedAt: Scalars['Date'];
-  user: User;
+  lastModifiedAt: Scalars['Date'];
+  status?: Maybe<Scalars['String']>;
 };
 
-export type BookmarksVariables = Exact<{
-  categoryId: Scalars['Int'];
-  skip?: Maybe<Scalars['Int']>;
-  take?: Maybe<Scalars['Int']>;
-  where?: Maybe<Scalars['JSON']>;
-  orderBy?: Maybe<Scalars['JSON']>;
+export type FetchUsersVariables = Exact<{ [key: string]: never; }>;
+
+
+export type FetchUsers = { __typename?: 'Query', users: Array<{ __typename?: 'User', id: number, createdAt: any, email: string, admin: boolean, createdBy?: { __typename?: 'User', email: string } | null }> };
+
+export type FetchCurrentUserVariables = Exact<{ [key: string]: never; }>;
+
+
+export type FetchCurrentUser = { __typename?: 'Query', currentUser: { __typename?: 'User', id: number, createdAt: any, email: string, admin: boolean } };
+
+export type AddUserVariables = Exact<{
+  email: Scalars['String'];
 }>;
 
 
-export type Bookmarks = { __typename?: 'Query', bookmarks: { __typename?: 'BookmarksQueryResponse', data: Array<{ __typename?: 'Bookmark', id: number, title: string, url: string, description?: string | null | undefined, createdAt: any, category: { __typename?: 'Category', id: number }, groupedTags: Array<{ __typename?: 'GroupedTag', createdByCurrentUser: number, name: string, total: number }>, aliases: Array<{ __typename?: 'BookmarkAlias', url: string }> }>, meta: { __typename?: 'PaginationInfo', total: number, count: number, take?: number | null | undefined, skip?: number | null | undefined } } };
+export type AddUser = { __typename?: 'Mutation', addUser?: { __typename?: 'User', id: number } | null };
 
-export type BookmarksForUrlVariables = Exact<{
+export type RemoveUserVariables = Exact<{
+  email: Scalars['String'];
+}>;
+
+
+export type RemoveUser = { __typename?: 'Mutation', removeUser?: any | null };
+
+export type FetchDramasVariables = Exact<{
+  where?: InputMaybe<Scalars['JSON']>;
+  take?: InputMaybe<Scalars['Int']>;
+  skip?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Scalars['JSON']>;
+}>;
+
+
+export type FetchDramas = { __typename?: 'Query', dramas: { __typename?: 'DramasQueryResponse', meta: { __typename?: 'PaginationInfo', total: number, count: number, skip?: number | null, take?: number | null }, data: Array<{ __typename?: 'Drama', title: string, lastModifiedAt: any, finishedAiringAt?: any | null, startedAiringAt?: any | null, country?: string | null, episodeCount?: number | null, episodeDuration?: number | null, id: number, description: string, createdAt: any, status: string, currentUserWatched?: string | null, tags: Array<{ __typename?: 'Tag', name: string, createdBy: { __typename?: 'User', email: string } }>, groupedTags: Array<{ __typename?: 'GroupedTag', name: string, count: number, current: boolean }>, createdBy: { __typename?: 'User', email: string }, lastModifiedBy: { __typename?: 'User', email: string }, links: Array<{ __typename?: 'Link', url: string, createdAt: any, title: string, createdBy: { __typename?: 'User', email: string, createdAt: any } }>, watched: Array<{ __typename?: 'Watched', status?: string | null, lastModifiedAt: any, createdBy: { __typename?: 'User', email: string } }> }> } };
+
+export type AddDramaVariables = Exact<{
+  input: CreateDramaContent;
+}>;
+
+
+export type AddDrama = { __typename?: 'Mutation', addDrama?: { __typename?: 'Drama', id: number } | null };
+
+export type RemoveDramaVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type RemoveDrama = { __typename?: 'Mutation', removeDrama?: any | null };
+
+export type UpdateDramaVariables = Exact<{
+  id: Scalars['Int'];
+  input: CreateDramaContent;
+}>;
+
+
+export type UpdateDrama = { __typename?: 'Mutation', updateDrama?: any | null };
+
+export type IsDramaBookmarkedVariables = Exact<{
   url: Scalars['String'];
 }>;
 
 
-export type BookmarksForUrl = { __typename?: 'Query', bookmarksForUrl: Array<{ __typename?: 'Bookmark', id: number, title: string, url: string, description?: string | null | undefined, createdAt: any, category: { __typename?: 'Category', id: number }, groupedTags: Array<{ __typename?: 'GroupedTag', name: string, createdByCurrentUser: number, total: number }>, aliases: Array<{ __typename?: 'BookmarkAlias', url: string }> }> };
+export type IsDramaBookmarked = { __typename?: 'Query', isDramaBookmarked?: number | null };
 
-export type AddBookmarkVariables = Exact<{
-  input: CreateBookmarkContent;
+export type FetchActivityVariables = Exact<{
+  where?: InputMaybe<Scalars['JSON']>;
+  take?: InputMaybe<Scalars['Int']>;
+  skip?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Scalars['JSON']>;
 }>;
 
 
-export type AddBookmark = { __typename?: 'Mutation', addBookmark?: { __typename?: 'Bookmark', id: number } | null | undefined };
+export type FetchActivity = { __typename?: 'Query', activity: { __typename?: 'ActivityQueryResponse', data: Array<{ __typename?: 'Activity', id: number, message: string, createdAt: any, dramaId?: number | null, createdBy: { __typename?: 'User', email: string }, drama?: { __typename?: 'Drama', title: string } | null }>, meta: { __typename?: 'PaginationInfo', total: number, take?: number | null, count: number, skip?: number | null } } };
 
-export type RemoveBookmarkVariables = Exact<{
-  id: Scalars['Int'];
-}>;
+export type FetchTagsVariables = Exact<{ [key: string]: never; }>;
 
 
-export type RemoveBookmark = { __typename?: 'Mutation', removeBookmark?: any | null | undefined };
+export type FetchTags = { __typename?: 'Query', tags: Array<{ __typename?: 'Tag', name: string }> };
 
-export type UpdateBookmarkVariables = Exact<{
-  id: Scalars['Int'];
-  input: UpdateBookmarkContent;
-}>;
+export type DumpDataVariables = Exact<{ [key: string]: never; }>;
 
 
-export type UpdateBookmark = { __typename?: 'Mutation', updateBookmark?: any | null | undefined };
-
-export type CategoriesVariables = Exact<{
-  activeOnly?: Maybe<Scalars['Boolean']>;
-}>;
+export type DumpData = { __typename?: 'Query', dump?: any | null };
 
 
-export type Categories = { __typename?: 'Query', categories: { __typename?: 'CategoriesQueryResponse', data: Array<{ __typename?: 'Category', id: number, name: string, bookmarksCount: number }> } };
-
-export type GetCategoryVariables = Exact<{
-  id: Scalars['Int'];
-}>;
-
-
-export type GetCategory = { __typename?: 'Query', category?: { __typename?: 'Category', name: string, isAdmin: boolean, isActive: boolean, rules: Array<{ __typename?: 'CategoryPatternAlias', id: number, match: string, canonical: string, origin: string }>, users: Array<{ __typename?: 'UserCategory', id: number, active: boolean, admin: boolean, user: { __typename?: 'User', email: string } }> } | null | undefined };
-
-export type AddCategoryVariables = Exact<{
-  name: Scalars['String'];
-}>;
-
-
-export type AddCategory = { __typename?: 'Mutation', addCategory?: { __typename?: 'Category', id: number, name: string } | null | undefined };
-
-export type JoinCategoryVariables = Exact<{
-  id: Scalars['Int'];
-}>;
-
-
-export type JoinCategory = { __typename?: 'Mutation', joinCategory?: any | null | undefined };
-
-export type LeaveCategoryVariables = Exact<{
-  id: Scalars['Int'];
-}>;
-
-
-export type LeaveCategory = { __typename?: 'Mutation', leaveCategory?: any | null | undefined };
-
-export type AddCategoryPatternAliasVariables = Exact<{
-  categoryId: Scalars['Int'];
-  input: CreateCategoryAliasContent;
-}>;
-
-
-export type AddCategoryPatternAlias = { __typename?: 'Mutation', addCategoryPatternAlias?: any | null | undefined };
-
-export type RemoveCategoryPatternAliasVariables = Exact<{
-  id: Scalars['Int'];
-}>;
-
-
-export type RemoveCategoryPatternAlias = { __typename?: 'Mutation', removeCategoryPatternAlias?: any | null | undefined };
-
-export type UpdateCategoryPatternAliasVariables = Exact<{
-  id: Scalars['Int'];
-  input: UpdateCategoryAliasContent;
-}>;
-
-
-export type UpdateCategoryPatternAlias = { __typename?: 'Mutation', updateCategoryPatternAlias?: any | null | undefined };
-
-export type TagsVariables = Exact<{
-  categoryId: Scalars['Int'];
-  tagsWhere?: Maybe<Scalars['JSON']>;
-}>;
-
-
-export type Tags = { __typename?: 'Query', tags: Array<{ __typename?: 'Tag', name: string }> };
-
-export type AddTagVariables = Exact<{
-  bookmarkId: Scalars['Int'];
-  name: Scalars['String'];
-}>;
-
-
-export type AddTag = { __typename?: 'Mutation', addTag?: any | null | undefined };
-
-export type RemoveTagVariables = Exact<{
-  bookmarkId: Scalars['Int'];
-  name: Scalars['String'];
-}>;
-
-
-export type RemoveTag = { __typename?: 'Mutation', removeTag?: any | null | undefined };
-
-export type UsersVariables = Exact<{
-  categoryId: Scalars['Int'];
-}>;
-
-
-export type Users = { __typename?: 'Query', users: Array<{ __typename?: 'UserCategory', id: number, active: boolean, admin: boolean, user: { __typename?: 'User', email: string } }> };
-
-export type AddUsersVariables = Exact<{
-  categoryId: Scalars['Int'];
-  emails: Array<Scalars['String']> | Scalars['String'];
-}>;
-
-
-export type AddUsers = { __typename?: 'Mutation', addUsers?: any | null | undefined };
-
-export type RemoveUserVariables = Exact<{
-  categoryId: Scalars['Int'];
-  id: Scalars['Int'];
-}>;
-
-
-export type RemoveUser = { __typename?: 'Mutation', removeUser?: any | null | undefined };
-
-
-export const BookmarksDocument = `
-    query bookmarks($categoryId: Int!, $skip: Int, $take: Int, $where: JSON, $orderBy: JSON) {
-  bookmarks(
-    categoryId: $categoryId
-    skip: $skip
-    take: $take
-    where: $where
-    orderBy: $orderBy
-  ) {
-    data {
-      id
-      title
-      url
-      description
-      createdAt
-      category {
-        id
-      }
-      groupedTags {
-        createdByCurrentUser
-        name
-        total
-      }
-      aliases {
-        url
-      }
-    }
-    meta {
-      total
-      count
-      take
-      skip
-    }
-  }
-}
-    `;
-export const useBookmarks = <
-      TData = Bookmarks,
-      TError = Error
-    >(
-      variables: BookmarksVariables, 
-      options?: UseQueryOptions<Bookmarks, TError, TData>
-    ) => 
-    useQuery<Bookmarks, TError, TData>(
-      ['bookmarks', variables],
-      useAuthenticatedFetcher<Bookmarks, BookmarksVariables>(BookmarksDocument).bind(null, variables),
-      options
-    );
-useBookmarks.getKey = (variables: BookmarksVariables) => ['bookmarks', variables];
-
-export const BookmarksForUrlDocument = `
-    query bookmarksForUrl($url: String!) {
-  bookmarksForUrl(url: $url) {
+export const FetchUsersDocument = `
+    query fetchUsers {
+  users {
     id
-    title
-    url
-    description
     createdAt
-    category {
-      id
-    }
-    groupedTags {
-      name
-      createdByCurrentUser
-      total
-    }
-    aliases {
-      url
-    }
-  }
-}
-    `;
-export const useBookmarksForUrl = <
-      TData = BookmarksForUrl,
-      TError = Error
-    >(
-      variables: BookmarksForUrlVariables, 
-      options?: UseQueryOptions<BookmarksForUrl, TError, TData>
-    ) => 
-    useQuery<BookmarksForUrl, TError, TData>(
-      ['bookmarksForUrl', variables],
-      useAuthenticatedFetcher<BookmarksForUrl, BookmarksForUrlVariables>(BookmarksForUrlDocument).bind(null, variables),
-      options
-    );
-useBookmarksForUrl.getKey = (variables: BookmarksForUrlVariables) => ['bookmarksForUrl', variables];
-
-export const AddBookmarkDocument = `
-    mutation addBookmark($input: CreateBookmarkContent!) {
-  addBookmark(input: $input) {
-    id
-  }
-}
-    `;
-export const useAddBookmark = <
-      TError = Error,
-      TContext = unknown
-    >(options?: UseMutationOptions<AddBookmark, TError, AddBookmarkVariables, TContext>) => 
-    useMutation<AddBookmark, TError, AddBookmarkVariables, TContext>(
-      useAuthenticatedFetcher<AddBookmark, AddBookmarkVariables>(AddBookmarkDocument),
-      options
-    );
-export const RemoveBookmarkDocument = `
-    mutation removeBookmark($id: Int!) {
-  removeBookmark(id: $id)
-}
-    `;
-export const useRemoveBookmark = <
-      TError = Error,
-      TContext = unknown
-    >(options?: UseMutationOptions<RemoveBookmark, TError, RemoveBookmarkVariables, TContext>) => 
-    useMutation<RemoveBookmark, TError, RemoveBookmarkVariables, TContext>(
-      useAuthenticatedFetcher<RemoveBookmark, RemoveBookmarkVariables>(RemoveBookmarkDocument),
-      options
-    );
-export const UpdateBookmarkDocument = `
-    mutation updateBookmark($id: Int!, $input: UpdateBookmarkContent!) {
-  updateBookmark(bookmarkId: $id, input: $input)
-}
-    `;
-export const useUpdateBookmark = <
-      TError = Error,
-      TContext = unknown
-    >(options?: UseMutationOptions<UpdateBookmark, TError, UpdateBookmarkVariables, TContext>) => 
-    useMutation<UpdateBookmark, TError, UpdateBookmarkVariables, TContext>(
-      useAuthenticatedFetcher<UpdateBookmark, UpdateBookmarkVariables>(UpdateBookmarkDocument),
-      options
-    );
-export const CategoriesDocument = `
-    query categories($activeOnly: Boolean) {
-  categories(activeOnly: $activeOnly) {
-    data {
-      id
-      name
-      bookmarksCount
-    }
-  }
-}
-    `;
-export const useCategories = <
-      TData = Categories,
-      TError = Error
-    >(
-      variables?: CategoriesVariables, 
-      options?: UseQueryOptions<Categories, TError, TData>
-    ) => 
-    useQuery<Categories, TError, TData>(
-      variables === undefined ? ['categories'] : ['categories', variables],
-      useAuthenticatedFetcher<Categories, CategoriesVariables>(CategoriesDocument).bind(null, variables),
-      options
-    );
-useCategories.getKey = (variables?: CategoriesVariables) => variables === undefined ? ['categories'] : ['categories', variables];
-
-export const GetCategoryDocument = `
-    query getCategory($id: Int!) {
-  category(id: $id) {
-    name
-    rules {
-      id
-      match
-      canonical
-      origin
-    }
-    users {
-      id
-      active
-      admin
-      user {
-        email
-      }
-    }
-    isAdmin
-    isActive
-  }
-}
-    `;
-export const useGetCategory = <
-      TData = GetCategory,
-      TError = Error
-    >(
-      variables: GetCategoryVariables, 
-      options?: UseQueryOptions<GetCategory, TError, TData>
-    ) => 
-    useQuery<GetCategory, TError, TData>(
-      ['getCategory', variables],
-      useAuthenticatedFetcher<GetCategory, GetCategoryVariables>(GetCategoryDocument).bind(null, variables),
-      options
-    );
-useGetCategory.getKey = (variables: GetCategoryVariables) => ['getCategory', variables];
-
-export const AddCategoryDocument = `
-    mutation addCategory($name: String!) {
-  addCategory(name: $name) {
-    id
-    name
-  }
-}
-    `;
-export const useAddCategory = <
-      TError = Error,
-      TContext = unknown
-    >(options?: UseMutationOptions<AddCategory, TError, AddCategoryVariables, TContext>) => 
-    useMutation<AddCategory, TError, AddCategoryVariables, TContext>(
-      useAuthenticatedFetcher<AddCategory, AddCategoryVariables>(AddCategoryDocument),
-      options
-    );
-export const JoinCategoryDocument = `
-    mutation joinCategory($id: Int!) {
-  joinCategory(id: $id)
-}
-    `;
-export const useJoinCategory = <
-      TError = Error,
-      TContext = unknown
-    >(options?: UseMutationOptions<JoinCategory, TError, JoinCategoryVariables, TContext>) => 
-    useMutation<JoinCategory, TError, JoinCategoryVariables, TContext>(
-      useAuthenticatedFetcher<JoinCategory, JoinCategoryVariables>(JoinCategoryDocument),
-      options
-    );
-export const LeaveCategoryDocument = `
-    mutation leaveCategory($id: Int!) {
-  leaveCategory(id: $id)
-}
-    `;
-export const useLeaveCategory = <
-      TError = Error,
-      TContext = unknown
-    >(options?: UseMutationOptions<LeaveCategory, TError, LeaveCategoryVariables, TContext>) => 
-    useMutation<LeaveCategory, TError, LeaveCategoryVariables, TContext>(
-      useAuthenticatedFetcher<LeaveCategory, LeaveCategoryVariables>(LeaveCategoryDocument),
-      options
-    );
-export const AddCategoryPatternAliasDocument = `
-    mutation addCategoryPatternAlias($categoryId: Int!, $input: CreateCategoryAliasContent!) {
-  addCategoryPatternAlias(categoryId: $categoryId, input: $input)
-}
-    `;
-export const useAddCategoryPatternAlias = <
-      TError = Error,
-      TContext = unknown
-    >(options?: UseMutationOptions<AddCategoryPatternAlias, TError, AddCategoryPatternAliasVariables, TContext>) => 
-    useMutation<AddCategoryPatternAlias, TError, AddCategoryPatternAliasVariables, TContext>(
-      useAuthenticatedFetcher<AddCategoryPatternAlias, AddCategoryPatternAliasVariables>(AddCategoryPatternAliasDocument),
-      options
-    );
-export const RemoveCategoryPatternAliasDocument = `
-    mutation removeCategoryPatternAlias($id: Int!) {
-  removeCategoryPatternAlias(id: $id)
-}
-    `;
-export const useRemoveCategoryPatternAlias = <
-      TError = Error,
-      TContext = unknown
-    >(options?: UseMutationOptions<RemoveCategoryPatternAlias, TError, RemoveCategoryPatternAliasVariables, TContext>) => 
-    useMutation<RemoveCategoryPatternAlias, TError, RemoveCategoryPatternAliasVariables, TContext>(
-      useAuthenticatedFetcher<RemoveCategoryPatternAlias, RemoveCategoryPatternAliasVariables>(RemoveCategoryPatternAliasDocument),
-      options
-    );
-export const UpdateCategoryPatternAliasDocument = `
-    mutation updateCategoryPatternAlias($id: Int!, $input: UpdateCategoryAliasContent!) {
-  updateCategoryPatternAlias(id: $id, input: $input)
-}
-    `;
-export const useUpdateCategoryPatternAlias = <
-      TError = Error,
-      TContext = unknown
-    >(options?: UseMutationOptions<UpdateCategoryPatternAlias, TError, UpdateCategoryPatternAliasVariables, TContext>) => 
-    useMutation<UpdateCategoryPatternAlias, TError, UpdateCategoryPatternAliasVariables, TContext>(
-      useAuthenticatedFetcher<UpdateCategoryPatternAlias, UpdateCategoryPatternAliasVariables>(UpdateCategoryPatternAliasDocument),
-      options
-    );
-export const TagsDocument = `
-    query tags($categoryId: Int!, $tagsWhere: JSON) {
-  tags(categoryId: $categoryId, where: $tagsWhere, take: 20) {
-    name
-  }
-}
-    `;
-export const useTags = <
-      TData = Tags,
-      TError = Error
-    >(
-      variables: TagsVariables, 
-      options?: UseQueryOptions<Tags, TError, TData>
-    ) => 
-    useQuery<Tags, TError, TData>(
-      ['tags', variables],
-      useAuthenticatedFetcher<Tags, TagsVariables>(TagsDocument).bind(null, variables),
-      options
-    );
-useTags.getKey = (variables: TagsVariables) => ['tags', variables];
-
-export const AddTagDocument = `
-    mutation addTag($bookmarkId: Int!, $name: String!) {
-  addTag(bookmarkId: $bookmarkId, name: $name)
-}
-    `;
-export const useAddTag = <
-      TError = Error,
-      TContext = unknown
-    >(options?: UseMutationOptions<AddTag, TError, AddTagVariables, TContext>) => 
-    useMutation<AddTag, TError, AddTagVariables, TContext>(
-      useAuthenticatedFetcher<AddTag, AddTagVariables>(AddTagDocument),
-      options
-    );
-export const RemoveTagDocument = `
-    mutation removeTag($bookmarkId: Int!, $name: String!) {
-  removeTag(bookmarkId: $bookmarkId, name: $name)
-}
-    `;
-export const useRemoveTag = <
-      TError = Error,
-      TContext = unknown
-    >(options?: UseMutationOptions<RemoveTag, TError, RemoveTagVariables, TContext>) => 
-    useMutation<RemoveTag, TError, RemoveTagVariables, TContext>(
-      useAuthenticatedFetcher<RemoveTag, RemoveTagVariables>(RemoveTagDocument),
-      options
-    );
-export const UsersDocument = `
-    query users($categoryId: Int!) {
-  users(categoryId: $categoryId) {
-    id
-    user {
+    createdBy {
       email
     }
-    active
+    email
     admin
   }
 }
     `;
-export const useUsers = <
-      TData = Users,
+export const useFetchUsers = <
+      TData = FetchUsers,
       TError = Error
     >(
-      variables: UsersVariables, 
-      options?: UseQueryOptions<Users, TError, TData>
-    ) => 
-    useQuery<Users, TError, TData>(
-      ['users', variables],
-      useAuthenticatedFetcher<Users, UsersVariables>(UsersDocument).bind(null, variables),
+      variables?: FetchUsersVariables,
+      options?: UseQueryOptions<FetchUsers, TError, TData>
+    ) =>
+    useQuery<FetchUsers, TError, TData>(
+      variables === undefined ? ['fetchUsers'] : ['fetchUsers', variables],
+      useAuthenticatedFetcher<FetchUsers, FetchUsersVariables>(FetchUsersDocument).bind(null, variables),
       options
     );
-useUsers.getKey = (variables: UsersVariables) => ['users', variables];
 
-export const AddUsersDocument = `
-    mutation addUsers($categoryId: Int!, $emails: [String!]!) {
-  addUsers(categoryId: $categoryId, emails: $emails)
+useFetchUsers.getKey = (variables?: FetchUsersVariables) => variables === undefined ? ['fetchUsers'] : ['fetchUsers', variables];
+;
+
+export const FetchCurrentUserDocument = `
+    query fetchCurrentUser {
+  currentUser {
+    id
+    createdAt
+    email
+    admin
+  }
 }
     `;
-export const useAddUsers = <
+export const useFetchCurrentUser = <
+      TData = FetchCurrentUser,
+      TError = Error
+    >(
+      variables?: FetchCurrentUserVariables,
+      options?: UseQueryOptions<FetchCurrentUser, TError, TData>
+    ) =>
+    useQuery<FetchCurrentUser, TError, TData>(
+      variables === undefined ? ['fetchCurrentUser'] : ['fetchCurrentUser', variables],
+      useAuthenticatedFetcher<FetchCurrentUser, FetchCurrentUserVariables>(FetchCurrentUserDocument).bind(null, variables),
+      options
+    );
+
+useFetchCurrentUser.getKey = (variables?: FetchCurrentUserVariables) => variables === undefined ? ['fetchCurrentUser'] : ['fetchCurrentUser', variables];
+;
+
+export const AddUserDocument = `
+    mutation addUser($email: String!) {
+  addUser(email: $email) {
+    id
+  }
+}
+    `;
+export const useAddUser = <
       TError = Error,
       TContext = unknown
-    >(options?: UseMutationOptions<AddUsers, TError, AddUsersVariables, TContext>) => 
-    useMutation<AddUsers, TError, AddUsersVariables, TContext>(
-      useAuthenticatedFetcher<AddUsers, AddUsersVariables>(AddUsersDocument),
+    >(options?: UseMutationOptions<AddUser, TError, AddUserVariables, TContext>) =>
+    useMutation<AddUser, TError, AddUserVariables, TContext>(
+      ['addUser'],
+      useAuthenticatedFetcher<AddUser, AddUserVariables>(AddUserDocument),
       options
     );
 export const RemoveUserDocument = `
-    mutation removeUser($categoryId: Int!, $id: Int!) {
-  removeUser(categoryId: $categoryId, id: $id)
+    mutation removeUser($email: String!) {
+  removeUser(email: $email)
 }
     `;
 export const useRemoveUser = <
       TError = Error,
       TContext = unknown
-    >(options?: UseMutationOptions<RemoveUser, TError, RemoveUserVariables, TContext>) => 
+    >(options?: UseMutationOptions<RemoveUser, TError, RemoveUserVariables, TContext>) =>
     useMutation<RemoveUser, TError, RemoveUserVariables, TContext>(
+      ['removeUser'],
       useAuthenticatedFetcher<RemoveUser, RemoveUserVariables>(RemoveUserDocument),
       options
     );
+export const FetchDramasDocument = `
+    query fetchDramas($where: JSON, $take: Int, $skip: Int, $orderBy: JSON) {
+  dramas(where: $where, take: $take, skip: $skip, orderBy: $orderBy) {
+    meta {
+      total
+      count
+      skip
+      take
+    }
+    data {
+      title
+      tags {
+        name
+        createdBy {
+          email
+        }
+      }
+      groupedTags {
+        name
+        count
+        current
+      }
+      createdBy {
+        email
+      }
+      lastModifiedAt
+      lastModifiedBy {
+        email
+      }
+      finishedAiringAt
+      startedAiringAt
+      country
+      episodeCount
+      episodeDuration
+      links {
+        url
+        createdAt
+        title
+        createdBy {
+          email
+          createdAt
+        }
+      }
+      id
+      description
+      createdAt
+      status
+      watched {
+        createdBy {
+          email
+        }
+        status
+        lastModifiedAt
+      }
+      currentUserWatched
+    }
+  }
+}
+    `;
+export const useFetchDramas = <
+      TData = FetchDramas,
+      TError = Error
+    >(
+      variables?: FetchDramasVariables,
+      options?: UseQueryOptions<FetchDramas, TError, TData>
+    ) =>
+    useQuery<FetchDramas, TError, TData>(
+      variables === undefined ? ['fetchDramas'] : ['fetchDramas', variables],
+      useAuthenticatedFetcher<FetchDramas, FetchDramasVariables>(FetchDramasDocument).bind(null, variables),
+      options
+    );
+
+useFetchDramas.getKey = (variables?: FetchDramasVariables) => variables === undefined ? ['fetchDramas'] : ['fetchDramas', variables];
+;
+
+export const AddDramaDocument = `
+    mutation addDrama($input: CreateDramaContent!) {
+  addDrama(input: $input) {
+    id
+  }
+}
+    `;
+export const useAddDrama = <
+      TError = Error,
+      TContext = unknown
+    >(options?: UseMutationOptions<AddDrama, TError, AddDramaVariables, TContext>) =>
+    useMutation<AddDrama, TError, AddDramaVariables, TContext>(
+      ['addDrama'],
+      useAuthenticatedFetcher<AddDrama, AddDramaVariables>(AddDramaDocument),
+      options
+    );
+export const RemoveDramaDocument = `
+    mutation removeDrama($id: Int!) {
+  removeDrama(id: $id)
+}
+    `;
+export const useRemoveDrama = <
+      TError = Error,
+      TContext = unknown
+    >(options?: UseMutationOptions<RemoveDrama, TError, RemoveDramaVariables, TContext>) =>
+    useMutation<RemoveDrama, TError, RemoveDramaVariables, TContext>(
+      ['removeDrama'],
+      useAuthenticatedFetcher<RemoveDrama, RemoveDramaVariables>(RemoveDramaDocument),
+      options
+    );
+export const UpdateDramaDocument = `
+    mutation updateDrama($id: Int!, $input: CreateDramaContent!) {
+  updateDrama(id: $id, input: $input)
+}
+    `;
+export const useUpdateDrama = <
+      TError = Error,
+      TContext = unknown
+    >(options?: UseMutationOptions<UpdateDrama, TError, UpdateDramaVariables, TContext>) =>
+    useMutation<UpdateDrama, TError, UpdateDramaVariables, TContext>(
+      ['updateDrama'],
+      useAuthenticatedFetcher<UpdateDrama, UpdateDramaVariables>(UpdateDramaDocument),
+      options
+    );
+export const IsDramaBookmarkedDocument = `
+    query isDramaBookmarked($url: String!) {
+  isDramaBookmarked(url: $url)
+}
+    `;
+export const useIsDramaBookmarked = <
+      TData = IsDramaBookmarked,
+      TError = Error
+    >(
+      variables: IsDramaBookmarkedVariables,
+      options?: UseQueryOptions<IsDramaBookmarked, TError, TData>
+    ) =>
+    useQuery<IsDramaBookmarked, TError, TData>(
+      ['isDramaBookmarked', variables],
+      useAuthenticatedFetcher<IsDramaBookmarked, IsDramaBookmarkedVariables>(IsDramaBookmarkedDocument).bind(null, variables),
+      options
+    );
+
+useIsDramaBookmarked.getKey = (variables: IsDramaBookmarkedVariables) => ['isDramaBookmarked', variables];
+;
+
+export const FetchActivityDocument = `
+    query fetchActivity($where: JSON, $take: Int, $skip: Int, $orderBy: JSON) {
+  activity(where: $where, take: $take, skip: $skip, orderBy: $orderBy) {
+    data {
+      id
+      message
+      createdBy {
+        email
+      }
+      createdAt
+      dramaId
+      drama {
+        title
+      }
+    }
+    meta {
+      total
+      take
+      count
+      skip
+    }
+  }
+}
+    `;
+export const useFetchActivity = <
+      TData = FetchActivity,
+      TError = Error
+    >(
+      variables?: FetchActivityVariables,
+      options?: UseQueryOptions<FetchActivity, TError, TData>
+    ) =>
+    useQuery<FetchActivity, TError, TData>(
+      variables === undefined ? ['fetchActivity'] : ['fetchActivity', variables],
+      useAuthenticatedFetcher<FetchActivity, FetchActivityVariables>(FetchActivityDocument).bind(null, variables),
+      options
+    );
+
+useFetchActivity.getKey = (variables?: FetchActivityVariables) => variables === undefined ? ['fetchActivity'] : ['fetchActivity', variables];
+;
+
+export const FetchTagsDocument = `
+    query fetchTags {
+  tags(take: 100) {
+    name
+  }
+}
+    `;
+export const useFetchTags = <
+      TData = FetchTags,
+      TError = Error
+    >(
+      variables?: FetchTagsVariables,
+      options?: UseQueryOptions<FetchTags, TError, TData>
+    ) =>
+    useQuery<FetchTags, TError, TData>(
+      variables === undefined ? ['fetchTags'] : ['fetchTags', variables],
+      useAuthenticatedFetcher<FetchTags, FetchTagsVariables>(FetchTagsDocument).bind(null, variables),
+      options
+    );
+
+useFetchTags.getKey = (variables?: FetchTagsVariables) => variables === undefined ? ['fetchTags'] : ['fetchTags', variables];
+;
+
+export const DumpDataDocument = `
+    query dumpData {
+  dump
+}
+    `;
+export const useDumpData = <
+      TData = DumpData,
+      TError = Error
+    >(
+      variables?: DumpDataVariables,
+      options?: UseQueryOptions<DumpData, TError, TData>
+    ) =>
+    useQuery<DumpData, TError, TData>(
+      variables === undefined ? ['dumpData'] : ['dumpData', variables],
+      useAuthenticatedFetcher<DumpData, DumpDataVariables>(DumpDataDocument).bind(null, variables),
+      options
+    );
+
+useDumpData.getKey = (variables?: DumpDataVariables) => variables === undefined ? ['dumpData'] : ['dumpData', variables];
+;

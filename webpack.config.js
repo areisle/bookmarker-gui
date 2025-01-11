@@ -4,16 +4,32 @@ const CopyPlugin = require("copy-webpack-plugin");
 const Dotenv = require('dotenv-webpack');
 const webpack = require('webpack');
 
-const htmlTemplate = `
+const htmlTemplate = ({ htmlWebpackPlugin }) => {
+    return `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <script type="application/javascript" src="browser-polyfill.js"></script>
+        <meta charset="UTF-8" />
+        <title>${htmlWebpackPlugin.options.title}</title>
+      </head>
+      <body>
+        <div id='root'></div>
+      </body>
+    </html>
+    `
+}
+
+const htmlIndex = `
 <!DOCTYPE html>
 <html>
   <head>
-    <script type="application/javascript" src="browser-polyfill.js"></script>
     <meta charset="UTF-8" />
     <title>bookmarker</title>
   </head>
   <body>
-    <div id='root'></div>
+    <a href="options.html">options</a>
+    <a href="popup.html">popup</a>
   </body>
 </html>
 `
@@ -52,16 +68,19 @@ module.exports = {
         new HtmlWebpackPlugin({
             filename: 'options.html',
             chunks: ['options'],
+            title: 'Drama options',
             templateContent: htmlTemplate,
         }),
         new HtmlWebpackPlugin({
             filename: 'popup.html',
             chunks: ['popup'],
+            title: 'Drama popup',
             templateContent: htmlTemplate,
         }),
         new HtmlWebpackPlugin({
             filename: 'index.html',
-            chunks: ['popup']
+            chunks: [],
+            templateContent: htmlIndex,
         }),
         new CopyPlugin({
             patterns: [

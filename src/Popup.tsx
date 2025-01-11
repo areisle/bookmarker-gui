@@ -1,5 +1,5 @@
 import React from "react"
-import ReactDom from "react-dom"
+import { createRoot } from 'react-dom/client';
 import { PopupPage as Popup } from "./pages/PopupPage"
 import { AuthenticatedQueryProvider } from "./queries"
 import { PageMetaProvider } from "./queries/ActiveTabProvider"
@@ -19,4 +19,6 @@ function PopupPage() {
     )
 }
 
-ReactDom.render(<PopupPage />, document.getElementById('root'))
+const container = document.getElementById('root');
+const root = createRoot(container!);
+root.render(<PopupPage />);

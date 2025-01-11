@@ -1,4 +1,10 @@
 {
     "prettier.tabWidth": 4,
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "cSpell.words": [
+        "dramalist",
+        "dramanice",
+        "mydramalist"
+    ],
+    "typescript.tsdk": "node_modules/typescript/lib"
 }

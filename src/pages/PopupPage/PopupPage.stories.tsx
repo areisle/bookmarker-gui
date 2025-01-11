@@ -20,3 +20,12 @@ export const WithoutBookmark: Story = {
         }
     }
 }
+
+export const WithBookmark: Story = {
+    parameters: {
+        pageMeta: {
+            title: 'Maids Revenge',
+            url: 'https://dramanice.ac/drama/maids-revenge-2022-detail'
+        }
+    }
+}

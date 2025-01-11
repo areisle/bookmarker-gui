@@ -1,102 +1,74 @@
-import React, { ReactNode, useState } from 'react';
-import { Button, ListItem, ListItemText, MenuItem, MenuList, Tab, Tabs, Typography } from '@mui/material';
-import { Box } from '@mui/system';
-import { CategorySettings } from '../../components/CategorySettings';
-import { useAuth, useGetCategory, useJoinCategory } from '../../queries';
-import { AddCategory } from './AddCategory';
-import { TabPanel, tabProps } from '../../components/TabPanel';
-import { BookmarksList } from '../../components/BookmarksList';
-import { useSelectedCategory } from '../../queries/useSelectedCategory';
+import React, { useState } from 'react';
+import { Button, Box, Tab as MuiTab, Tabs } from '@mui/material';
+import { useAuth, useCurrentUser } from '../../queries';
+import { DramasList, Users } from '../../components';
+import { ActivityList } from '../../components/ActivityList';
 
-function OptionsPage() {
-    const {
-        categories,
-        categoryId: id,
-        setCategoryId: setId,
-        isLoading: loading,
-        error,
-    } = useSelectedCategory();
-
-    const [tab, setTab] = useState(0);
-    const { logout } = useAuth();
-
-    const { data: category, isLoading: isLoadingCategory, refetch } = useGetCategory(
-        { id: id! },
-        {
-            select: (response) => response.category,
-            enabled: Boolean(id)
-        }
-    )
-
-    const { mutate: joinCategory, error: errorJoining, isLoading: isJoining } = useJoinCategory(
-        { onSuccess: () => refetch() }
-    );
-
-
-    let content: ReactNode;
-
-    if (loading) {
-        content = <Typography>loading categories...</Typography>
-    } else if (error) {
-        content = <Typography color='error'>Unable to retrieve bookmark categories. {error.message}</Typography>
-    } else if (id) {
-        content = (
-            <>
-                <TabPanel value={tab} index={0}>
-                    <BookmarksList category={id} isActive={Boolean(category?.isActive)} />
-                </TabPanel>
-                <TabPanel value={tab} index={1}>
-                    <CategorySettings id={id} category={category} isLoading={isLoadingCategory} />
-                </TabPanel>
-            </>
-        )
-    } else {
-        content = <Typography>No category selected.</Typography>
-    }
+function Tab(props: { value: string | number, label?: string | number }) {
+    const { value, label = String(value), ...rest } = props;
 
     return (
-        <Box sx={{ display: 'grid', gridTemplateColumns: 'min-content 1fr' }}>
-            {/* show categories */}
-            <Box component='header'>
-                <MenuList
-                    dense
-                    sx={{ position: 'sticky', top: 0, padding: 1, minWidth: 160 }}
-                    disablePadding={true}
-                >
-                    {categories?.map((category) => (
-                        <MenuItem
-                            key={category.id}
-                            onClick={() => setId(category.id)}
-                            selected={category.id === id}
-                        >
-                            <ListItemText primary={`${category.name} (${category.bookmarksCount})`} />
-                        </MenuItem>
-                    ))}
-                    <ListItem>
-                        <AddCategory />
-                    </ListItem>
-                </MenuList>
-            </Box>
+        <MuiTab
+            {...rest}
+            id={`simple-tab-${value}`}
+            aria-controls={`simple-tabpanel-${value}`}
+            label={label}
+            value={value}
+            sx={{ bgcolor: 'background.paper' }}
+        />
+    )
+}
+
+interface TabPanelProps {
+    children?: React.ReactNode;
+    value: number | string;
+    tab: number | string;
+}
+
+function TabPanel(props: TabPanelProps) {
+    const { children, value, tab } = props;
+
+    return (
+        <div
+            role="tabpanel"
+            hidden={value !== tab}
+            id={`simple-tabpanel-${tab}`}
+            aria-labelledby={`simple-tab-${tab}`}
+        >
+            {value === tab && (
+                <Box sx={{ p: 1 }}>
+                    {children}
+                </Box>
+            )}
+        </div>
+    );
+}
+
+function OptionsPage() {
+
+    const { logout } = useAuth();
+    const user = useCurrentUser();
+    const [tab, setTab] = useState('Dramas');
+
+    return (
+        <Box>
             <Box sx={{ flexGrow: 1 }} component='main'>
-                <Tabs
-                    value={tab}
-                    onChange={(_, nextTab) => setTab(nextTab)}
-                    aria-label="category sub-page"
-                    sx={{ position: 'sticky', top: 0, zIndex: 1, bgcolor: 'background.paper', pl: 1 }}
-                >
-                    <Tab label="Bookmarks" {...tabProps(0)} sx={{ bgcolor: 'background.paper' }} />
-                    <Tab label="Settings" {...tabProps(1)} sx={{ bgcolor: 'background.paper' }} />
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', position: 'sticky', top: 0, zIndex: 1000, bgcolor: 'background.paper', gap: '5px' }}>
+                    <Tabs
+                        value={tab}
+                        onChange={(_, nextTab) => {
+                            setTab(nextTab);
+                        }}
+                        sx={{ pl: 1, flexGrow: 1 }}
+                    >
+                        <Tab value="Dramas" />
+                        {user.admin && (<Tab value="Settings" />)}
+                        <Tab value="Activity" />
+                    </Tabs>
                     <Box
                         sx={{ alignSelf: 'center', marginInlineStart: 'auto', gap: 1, display: 'flex' }}
                         pr={1}
                     >
-                        {!category?.isActive && (
-                            <Button
-                                onClick={() => joinCategory({ id: id! })}
-                            >
-                                join category
-                            </Button>
-                        )}
                         <Button
                             onClick={logout}
                             variant='text'
@@ -104,8 +76,16 @@ function OptionsPage() {
                             logout
                         </Button>
                     </Box>
-                </Tabs>
-                {content}
+                </Box>
+                <TabPanel value={tab} tab="Dramas">
+                    <DramasList />
+                </TabPanel>
+                <TabPanel value={tab} tab="Activity">
+                    <ActivityList />
+                </TabPanel>
+                <TabPanel value={tab} tab="Settings">
+                    <Users />
+                </TabPanel>
             </Box>
         </Box>
     );

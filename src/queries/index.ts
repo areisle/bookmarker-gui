@@ -1,25 +1,25 @@
-import { useInfiniteQuery } from "react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { useAuthenticatedFetcher } from "./AuthProvider";
 import {
-    Bookmarks,
-    BookmarksDocument,
-    BookmarksVariables,
-    useBookmarks,
+    FetchDramas,
+    FetchDramasDocument,
+    FetchDramasVariables,
+    useFetchDramas,
 } from "./generated";
 
-export { AuthenticatedQueryProvider, useAuth } from "./AuthProvider";
+export * from "./AuthProvider";
 export * from "./generated";
 
-export type Bookmark = Bookmarks["bookmarks"]["data"][number];
+export type Drama = FetchDramas["dramas"]["data"][number];
 
-const useInfiniteBookmarks = (variables: Omit<BookmarksVariables, "skip">) => {
-    const fetcher = useAuthenticatedFetcher<Bookmarks, BookmarksVariables>(
-        BookmarksDocument
+const useInfiniteDramas = (variables: Omit<FetchDramasVariables, "skip">) => {
+    const fetcher = useAuthenticatedFetcher<FetchDramas, FetchDramasVariables>(
+        FetchDramasDocument
     );
 
-    return useInfiniteQuery<Bookmarks["bookmarks"], Error>(
-        useBookmarks.getKey(variables),
-        async ({ pageParam }) => {
+    return useInfiniteQuery<FetchDramas["dramas"], Error>({
+        queryKey: useFetchDramas.getKey(variables),
+        queryFn: async ({ pageParam }) => {
             const skip = pageParam ?? 0;
 
             const response = await fetcher({
@@ -27,20 +27,17 @@ const useInfiniteBookmarks = (variables: Omit<BookmarksVariables, "skip">) => {
                 skip,
             });
 
-            return response.bookmarks;
+            return response.dramas;
         },
-        {
-            getNextPageParam: (lastPage) => {
-                const skip = lastPage.meta.skip ?? 0;
-                const take = variables.take ?? 10;
-                const { count, total } = lastPage.meta;
-                if (skip + count < total) {
-                    return skip + take;
-                }
-            },
-            keepPreviousData: true,
-        }
-    );
+        getNextPageParam: (lastPage) => {
+            const skip = lastPage.meta.skip ?? 0;
+            const take = variables.take ?? 50;
+            const { count, total } = lastPage.meta;
+            if (skip + count < total) {
+                return skip + take;
+            }
+        },
+    });
 };
 
-export { useInfiniteBookmarks };
+export { useInfiniteDramas };

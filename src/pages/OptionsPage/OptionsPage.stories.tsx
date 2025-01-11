@@ -7,4 +7,20 @@ export default {
     title: 'pages/OptionsPage',
 } as Meta;
 
-export const Example: Story = { args: {} }
+export const AsStandardUser: Story = {
+    parameters: {
+        user: {
+            email: 'example@domain.ca',
+            id: 1,
+        }
+    },
+}
+export const AsAdminUser: Story = {
+    parameters: {
+        user: {
+            email: 'example@domain.ca',
+            id: 1,
+            admin: true
+        }
+    }
+}

@@ -5,14 +5,14 @@ const app = initializeApp(JSON.parse(process.env.FIREBASE_CONFIG!));
 const auth = getAuth();
 
 const setIcon = async () => {
-    const [tab] = await global.browser.tabs.query({
+    const [tab] = await global.browser!.tabs.query({
         active: true,
         lastFocusedWindow: true,
     });
     const token = await auth.currentUser?.getIdToken();
     if (tab.url) {
         const iconUrl = await getIconUrl(token, tab.url);
-        await global.browser.browserAction.setIcon({
+        await global.browser!.browserAction.setIcon({
             path: iconUrl,
             tabId: tab.id,
         });
@@ -36,10 +36,9 @@ const getIconUrl = async (
             },
             body: JSON.stringify({
                 query: `
-                    query isBookmarked($url: String!) {
-                        isBookmarked(url: $url)
-                    }
-                `,
+                query isDramaBookmarked($url: String!) {
+                    isDramaBookmarked(url: $url)
+                }`,
                 variables: { url },
             }),
         });
@@ -50,7 +49,7 @@ const getIconUrl = async (
             return "icons/icon-warning-64.png";
         }
 
-        if (result.data.isBookmarked) {
+        if (result.data.isDramaBookmarked) {
             return "icons/icon-bookmarked-64.png";
         }
 
@@ -62,11 +61,11 @@ const getIconUrl = async (
     return "icons/icon-warning-64.png";
 };
 
-global.browser.tabs.onActivated.addListener((arg) => {
+global.browser!.tabs.onActivated.addListener((arg) => {
     setIcon();
 });
 
-global.browser.tabs.onUpdated.addListener(async (tabId, _, tab) => {
+global.browser!.tabs.onUpdated.addListener(async (tabId, _, tab) => {
     setIcon();
 });
 

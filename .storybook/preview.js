@@ -1,7 +1,30 @@
 import { CustomThemeProvider } from '../src/theme';
-import { AuthenticatedQueryProvider } from '../src/queries';
+import { AuthContext, UserContext, queryClient } from '../src/queries';
+import { QueryClientProvider } from "@tanstack/react-query";
+
 import { MINIMAL_VIEWPORTS } from '@storybook/addon-viewport';
 import { PageMetaContext } from '../src/queries/ActiveTabProvider';
+import { initialize, mswDecorator } from 'msw-storybook-addon';
+
+// Initialize MSW
+initialize({
+    // onUnhandledRequest: 'bypass',
+    onUnhandledRequest: async (req) => {
+        if (req.url.origin.includes('googleapis')) {
+            return 'bypass';
+        }
+        let data = ''
+        try {
+            data = await req.json()
+        } catch (e) {
+            // pass
+        }
+        console.warn(`Unhandled request ${req.method} ${req.url}.\n
+            ${JSON.stringify(data, undefined, 2)}
+        `)
+        return 'bypass';
+    },
+});
 
 const customViewports = {
     popup: {
@@ -17,7 +40,7 @@ const customViewports = {
 };
 
 export const parameters = {
-    actions: { argTypesRegex: "^on[A-Z].*" },
+    actions: { argTypesRegex: "^on.*" },
     controls: {
         matchers: {
             color: /(background|color)$/i,
@@ -33,13 +56,20 @@ export const parameters = {
 };
 
 export const decorators = [
-    (Story, context) => (
-        <CustomThemeProvider>
-            <AuthenticatedQueryProvider>
-                <PageMetaContext.Provider value={context.parameters.pageMeta}>
-                    <Story />
-                </PageMetaContext.Provider>
-            </AuthenticatedQueryProvider>
-        </CustomThemeProvider>
-    ),
+    mswDecorator,
+    (Story, context) => {
+        return (
+            <CustomThemeProvider>
+                <QueryClientProvider client={queryClient}>
+                    <AuthContext.Provider value={{ token: '', logout: console.log }}>
+                        <UserContext.Provider value={context.parameters.user}>
+                            <PageMetaContext.Provider value={context.parameters.pageMeta}>
+                                <Story />
+                            </PageMetaContext.Provider>
+                        </UserContext.Provider>
+                    </AuthContext.Provider>
+                </QueryClientProvider>
+            </CustomThemeProvider>
+        )
+    },
 ];

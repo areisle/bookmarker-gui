@@ -1,7 +1,8 @@
 import { Box, Button, CircularProgress, Typography } from "@mui/material";
-import React, { createContext, ReactNode, useCallback, useContext } from "react";
-import { QueryClient, QueryClientProvider, useMutation } from "react-query";
+import React, { createContext, ReactNode, useCallback, useContext, useMemo, useState } from "react";
+import { QueryClient, QueryClientProvider, useMutation } from "@tanstack/react-query";
 import { requestLogin, requestLogout, useToken } from "./firebase";
+import { FetchCurrentUser, useFetchCurrentUser } from "./generated";
 
 const USE_AUTH = process.env.NODE_ENV !== "development" || !process.env.NO_AUTH;
 
@@ -15,6 +16,48 @@ const queryClient = new QueryClient({
         },
     }
 })
+
+
+const UserContext = createContext<FetchCurrentUser['currentUser'] | undefined>(undefined);
+
+function UserContextProvider(props: { children: ReactNode }) {
+    const {
+        data: user,
+        isLoading,
+        error,
+    } = useFetchCurrentUser();
+
+    if (isLoading || error) {
+        return (
+            <Box
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-start',
+                }}
+            >
+                {isLoading && <CircularProgress size={20} />}
+                {error && <Typography color='error' sx={{ marginTop: 1 }}>{error.message}</Typography>}
+            </Box>
+        )
+    }
+
+    return (
+        <UserContext.Provider value={user['currentUser']}>
+            {props.children}
+        </UserContext.Provider>
+    )
+}
+
+function useCurrentUser() {
+    const user = useContext(UserContext);
+
+    if (!user) {
+        throw new Error('No User Provider found.')
+    }
+
+    return user;
+}
 
 interface AuthContextState {
     token: string;
@@ -36,7 +79,6 @@ function AuthProvider(props: { children: ReactNode, isPopup: boolean }) {
         async () => requestLogin(),
     );
 
-
     const { mutate: logout, isLoading: isLoggingOut, error: errorLoadingOut } = useMutation<unknown, Error>(
         requestLogout,
     );
@@ -57,7 +99,14 @@ function AuthProvider(props: { children: ReactNode, isPopup: boolean }) {
         }
     }, [logout, isLoggingOut, isLoggingIn]);
 
-    if ((isLoggingIn || !token || errorLoggingIn) && USE_AUTH) {
+    const value = useMemo(() => ({
+        token,
+        logout: handleLogout,
+    }), [handleLogout, token]);
+
+    if (
+        (isLoggingIn || !token || errorLoggingIn) && USE_AUTH
+    ) {
         return (
             <Box
                 sx={{
@@ -80,7 +129,7 @@ function AuthProvider(props: { children: ReactNode, isPopup: boolean }) {
     }
 
     return (
-        <AuthContext.Provider value={{ token, logout: handleLogout }}>
+        <AuthContext.Provider value={value}>
             {children}
         </AuthContext.Provider>
     )
@@ -92,7 +141,9 @@ const AuthenticatedQueryProvider = (props: { children: ReactNode, isPopup: boole
     return (
         <QueryClientProvider client={queryClient}>
             <AuthProvider isPopup={isPopup}>
-                {children}
+                <UserContextProvider>
+                    {children}
+                </UserContextProvider>
             </AuthProvider>
         </QueryClientProvider>
     )
@@ -139,8 +190,13 @@ const useAuthenticatedFetcher = <TData, TVariables>(query: string): ((variables?
     };
 }
 
+
 export {
     AuthenticatedQueryProvider,
     useAuthenticatedFetcher,
     useAuth,
+    useCurrentUser,
+    AuthContext,
+    UserContext,
+    queryClient,
 }

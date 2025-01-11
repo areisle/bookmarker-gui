@@ -1,0 +1,139 @@
+query fetchUsers {
+    users {
+        id
+        createdAt
+        createdBy {
+            email
+        }
+        email
+        admin
+    }
+}
+
+query fetchCurrentUser {
+    currentUser {
+        id
+        createdAt
+        email
+        admin
+    }
+}
+
+mutation addUser($email: String!) {
+    addUser(email: $email) {
+        id
+    }
+}
+
+mutation removeUser($email: String!) {
+    removeUser(email: $email)
+}
+
+query fetchDramas($where: JSON, $take: Int, $skip: Int, $orderBy: JSON) {
+    dramas(where: $where, take: $take, skip: $skip, orderBy: $orderBy) {
+        meta {
+            total
+            count
+            skip
+            take
+        }
+        data {
+            title
+            tags {
+                name
+                createdBy {
+                    email
+                }
+            }
+            groupedTags {
+                name
+                count
+                current
+            }
+            createdBy {
+                email
+            }
+            lastModifiedAt
+            lastModifiedBy {
+                email
+            }
+            finishedAiringAt
+            startedAiringAt
+            country
+            episodeCount
+            episodeDuration
+            links {
+                url
+                createdAt
+                title
+                createdBy {
+                    email
+                    createdAt
+                }
+            }
+            id
+            description
+            createdAt
+            status
+            watched {
+                createdBy {
+                    email
+                }
+                status
+                lastModifiedAt
+            }
+            currentUserWatched
+        }
+    }
+}
+
+mutation addDrama($input: CreateDramaContent!) {
+    addDrama(input: $input) {
+        id
+    }
+}
+
+mutation removeDrama($id: Int!) {
+    removeDrama(id: $id)
+}
+
+mutation updateDrama($id: Int!, $input: CreateDramaContent!) {
+    updateDrama(id: $id, input: $input)
+}
+
+query isDramaBookmarked($url: String!) {
+    isDramaBookmarked(url: $url)
+}
+
+query fetchActivity($where: JSON, $take: Int, $skip: Int, $orderBy: JSON) {
+    activity(where: $where, take: $take, skip: $skip, orderBy: $orderBy) {
+        data {
+            id
+            message
+            createdBy {
+                email
+            }
+            createdAt
+            dramaId
+            drama {
+                title
+            }
+        }
+        meta {
+            total
+            take
+            count
+            skip
+        }
+    }
+}
+
+query fetchTags {
+    tags(take: 100) {
+        name
+    }
+}
+
+query dumpData {
+    dump
+}

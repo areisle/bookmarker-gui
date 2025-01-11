@@ -1,47 +1,57 @@
 import { Box, Button, Stack, Typography } from '@mui/material';
-import React from 'react';
-import { BookmarkEditor, CategorySelect } from '../../components';
-import { useAddBookmark, useAuth, useRemoveBookmark, useUpdateBookmark } from '../../queries';
-import { useBookmark } from './useSelectedBookmark';
-import { useSelectedCategory } from '../../queries/useSelectedCategory';
+import React, { useMemo } from 'react';
+import { DramaEditor } from '../../components';
+import { useAddDrama, useAuth, useRemoveDrama, useUpdateDrama, useIsDramaBookmarked, useFetchDramas } from '../../queries';
+import { usePageMeta } from '../../queries/ActiveTabProvider';
 
 
 /**
- * allow user to add/edit/delete bookmark for active page
- *
- * if multiple bookmarks are returned for url what should it do?
- * probably look at whatever category was last selected,
- * or show a select for category
+ * allow user to add/edit/delete drama for active page
  * @returns
  */
 function PopupPage() {
-    const { categoryId, setCategoryId } = useSelectedCategory();
+    const tab = usePageMeta();
+
+    const { data: dramaId, refetch: refetchIsBookmarked } = useIsDramaBookmarked(
+        { url: tab?.url as string },
+        { enabled: Boolean(tab?.url), select: (response) => response.isDramaBookmarked }
+    );
+
+    const newDrama = useMemo(() => ({
+        title: tab?.title,
+        links: [{ url: tab?.url }]
+    }), [tab]);
 
     const {
-        bookmark,
-        isLoading: isLoadingBookmark,
-        error: errorLoadingBookmark,
+        data: drama,
+        isLoading: isLoadingDrama,
+        error: errorLoadingDrama,
         refetch,
-        bookmarkedCategories,
-    } = useBookmark(categoryId, setCategoryId);
+    } = useFetchDramas(
+        { where: { id: dramaId! } },
+        {
+            enabled: Boolean(dramaId),
+            select: (response) => response.dramas.data[0]
+        },
+    )
 
     const {
-        mutate: addBookmark,
+        mutate: addDrama,
         error: errorAdding,
         isLoading: isAdding
-    } = useAddBookmark({ onSuccess: () => refetch() });
+    } = useAddDrama({ onSuccess: () => refetchIsBookmarked() });
 
     const {
-        mutate: removeBookmark,
+        mutate: removeDrama,
         error: errorRemoving,
         isLoading: isRemoving
-    } = useRemoveBookmark({ onSuccess: () => refetch() });
+    } = useRemoveDrama({ onSuccess: () => refetch() });
 
     const {
-        mutate: updateBookmark,
+        mutate: updateDrama,
         error: errorUpdating,
         isLoading: isUpdating
-    } = useUpdateBookmark({ onSuccess: () => refetch() });
+    } = useUpdateDrama({ onSuccess: () => refetch() });
 
     const { logout } = useAuth();
 
@@ -57,7 +67,7 @@ function PopupPage() {
                         sx={{ padding: 0 }}
                         onClick={() => global.browser?.runtime?.openOptionsPage()}
                     >
-                        see all bookmarks
+                        see all dramas
                     </Button>
                     <Button
                         variant='text'
@@ -67,25 +77,20 @@ function PopupPage() {
                         Logout
                     </Button>
                 </Box>
-                {errorLoadingBookmark && (
+                {errorLoadingDrama && (
                     <Typography color='error'>
-                        Unable to load bookmarks for url. {errorLoadingBookmark.message}
+                        Unable to load dramas for url. {errorLoadingDrama.message}
                     </Typography>
                 )}
-                <CategorySelect
-                    value={categoryId}
-                    onChange={(value) => setCategoryId(value)}
-                    bookmarkedCategories={bookmarkedCategories}
-                />
-                <BookmarkEditor
-                    bookmark={bookmark}
-                    onAdd={addBookmark}
-                    onDelete={removeBookmark}
-                    onUpdate={updateBookmark}
+                <DramaEditor
+                    drama={drama ?? newDrama}
+                    onAdd={addDrama}
+                    onDelete={removeDrama}
+                    onUpdate={updateDrama}
                     error={errorAdding || errorRemoving || errorUpdating}
                     isDeleting={isRemoving}
                     isProcessing={isAdding || isUpdating}
-                    isLoading={isLoadingBookmark}
+                    isLoading={Boolean(isLoadingDrama && dramaId)}
                 />
             </Stack>
         </Box>

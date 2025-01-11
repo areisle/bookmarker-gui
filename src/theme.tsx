@@ -43,6 +43,8 @@ const createCustomTheme = (prefersDarkMode: boolean) => createTheme({
     },
     palette: {
         mode: prefersDarkMode ? 'dark' : 'light',
+        secondary: { main: '#428bca' },
+        primary: { main: '#f04892' }
     },
     components: {
         MuiInputBase: {
@@ -61,7 +63,8 @@ const createCustomTheme = (prefersDarkMode: boolean) => createTheme({
         },
         MuiButton: {
             defaultProps: {
-                variant: 'outlined'
+                variant: 'outlined',
+                size: 'small',
             },
             styleOverrides: {
                 root: {
@@ -103,13 +106,19 @@ const createCustomTheme = (prefersDarkMode: boolean) => createTheme({
         MuiLink: {
             defaultProps: {
                 target: '_blank',
-                rel: 'noopener'
+                rel: 'noopener',
+                color: 'secondary',
             }
         },
         MuiChip: {
             defaultProps: {
                 size: 'small',
                 color: 'primary'
+            }
+        },
+        MuiTypography: {
+            defaultProps: {
+                variant: 'body2'
             }
         }
     }

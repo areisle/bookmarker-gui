@@ -1,5 +1,5 @@
 import React, { createContext, ReactNode, useContext } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 interface PageMetaContextState {
     url?: string;
@@ -13,17 +13,18 @@ function usePageMeta() {
 }
 
 function PageMetaProvider({ children }: { children: ReactNode }) {
-    const { data: tab, isLoading } = useQuery('current-tab', async () => {
-        const [tab] = await global.browser.tabs.query({
+    const { data: tab, isLoading } = useQuery(['current-tab'], async () => {
+        const [next] = await global.browser.tabs.query({
             active: true,
             lastFocusedWindow: true,
         });
-        return tab;
+
+        return {
+            url: next.url,
+            title: (next.title ?? '').split(' at Dramanice')[0].trim()
+        };
     });
 
-    if (isLoading) {
-
-    }
 
     return (
         <PageMetaContext.Provider value={{ url: tab?.url, title: tab?.title }}>

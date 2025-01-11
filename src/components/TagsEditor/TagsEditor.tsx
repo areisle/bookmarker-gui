@@ -1,23 +1,16 @@
-import { TextField, Autocomplete, CircularProgress } from '@mui/material';
+import { Add } from '@mui/icons-material';
+import { TextField, Autocomplete, CircularProgress, Chip, ChipProps } from '@mui/material';
 import React, { useState } from 'react';
-import { useTags } from '../../queries';
-import { FlippableTag } from '../FlippableTag';
+import { GroupedTag, useFetchTags } from '../../queries';
 
-interface Tag {
-    name: string;
-    createdByCurrentUser: number;
-    index?: number;
-    total: number;
-}
 
 interface TagsEditorProps {
-    categoryId: number | undefined | null;
     disabled?: boolean;
-    value: Tag[] | undefined;
-    onChange: (next: Tag[]) => void;
+    value: GroupedTag[] | undefined;
+    onChange: (next: GroupedTag[]) => void;
 }
 
-const defaultTags: Tag[] = [];
+const defaultTags: GroupedTag[] = [];
 
 /**
  * should allow user to add tags to include as well as
@@ -26,36 +19,47 @@ const defaultTags: Tag[] = [];
  * but indicate that when they match a tag to exclude not include it
  */
 function TagsEditor(props: TagsEditorProps) {
-    const { categoryId, value, onChange, disabled } = props;
+    const { value, onChange, disabled } = props;
 
     const [inputText, setInputText] = useState('');
 
-    const { data: tags, isLoading: isLoadingOptions, error } = useTags(
-        {
-            categoryId: categoryId!,
-            tagsWhere: {
-                name: {
-                    contains: inputText
-                }
-            }
-        },
+    const { data: tags, isLoading: isLoadingOptions, error } = useFetchTags(
+        undefined,
         {
             keepPreviousData: true,
-            select: (response) => response.tags.map((tag) => ({ ...tag, createdByCurrentUser: 1, total: 1 })),
-            enabled: Boolean(categoryId),
+            select: (response) => response.tags.map((tag) => ({ ...tag, current: true, count: 1 } as GroupedTag)),
         }
     )
 
-    const handleAddExistingTag = (tagName: string) => {
-        if (!value) { return; }
+    const handleUpdateTags = (tagName: string | undefined, op: 'add' | 'remove') => {
+        if (!value || !tagName) return;
         const tagIndex = value.findIndex((tag) => tag.name === tagName);
+        let tag = value[tagIndex];
+
+        if (op === 'remove') {
+            if (!tag || !tag.current) return;
+            if (tag.count === 1) {
+                onChange([...value.slice(0, tagIndex), ...value.slice(tagIndex + 1)]);
+                return;
+            }
+            tag = { ...tag };
+            tag.count -= 1;
+            tag.current = false;
+        } else {
+            if (tag && tag.current) return;
+            if (!tag) {
+                onChange([...value, { name: tagName, current: true, count: 1 }]);
+                return;
+            }
+            tag = { ...tag };
+            tag.current = true;
+            tag.count += 1;
+        }
+
+
         const next = [
             ...value.slice(0, tagIndex),
-            {
-                ...value[tagIndex],
-                createdByCurrentUser: 1,
-                total: value[tagIndex].total + 1,
-            },
+            tag,
             ...value.slice(tagIndex + 1)
         ];
         onChange(next);
@@ -63,6 +67,7 @@ function TagsEditor(props: TagsEditorProps) {
 
     return (
         <Autocomplete
+            disabled={disabled}
             disablePortal
             autoComplete
             disableClearable={true}
@@ -71,28 +76,21 @@ function TagsEditor(props: TagsEditorProps) {
                 setInputText(nextInputText.toLowerCase())
             }}
             onChange={(_, next, reason, details) => {
-                if (reason === 'removeOption' && !details?.option.createdByCurrentUser) {
-                    // cannot be deleted
+                const opt = details?.option;
+                if (reason === 'removeOption') {
+                    handleUpdateTags(opt?.name, 'remove');
                     return;
+                } else if (reason === 'createOption') {
+                    handleUpdateTags(opt as unknown as string, 'add');
+                } else if (reason === 'selectOption') {
+                    handleUpdateTags(opt?.name, 'add');
                 }
-
-                if (reason === 'createOption' && details?.option) {
-                    const newTag: Tag = {
-                        name: (details.option as unknown as string).toLowerCase(),
-                        createdByCurrentUser: 1,
-                        total: 1
-                    }
-
-                    onChange([...value ?? [], newTag]);
-                    return;
-                }
-                onChange(next as Tag[]);
             }}
             inputValue={inputText}
             autoHighlight
             loading={isLoadingOptions}
             isOptionEqualToValue={(option, value) => option.name === value.name}
-            getOptionLabel={(option) => option.name}
+            getOptionLabel={(option) => typeof option === 'string' ? option : option.name}
             options={tags ?? defaultTags}
             fullWidth={true}
             multiple={true}
@@ -122,16 +120,28 @@ function TagsEditor(props: TagsEditorProps) {
             )}
             renderTags={(values, getTagProps) => (
                 values.map((tag, index) => {
+                    const label = tag.count > 1 ? `${tag.name} (${tag.count})` : tag.name;
+                    const tagProps = getTagProps?.({ index }) as ChipProps;
+                    if (tag.current) {
+                        return (
+                            <Chip
+                                {...tagProps}
+                                label={label}
+                                variant='filled'
+                            />
+                        )
+                    }
+
                     return (
-                        <FlippableTag
-                            {...getTagProps?.({ index })}
-                            name={tag.name}
-                            onFlip={handleAddExistingTag}
-                            createdByCurrentUser={tag.createdByCurrentUser}
-                            isEditable={!disabled}
-                            count={tag.total}
+                        <Chip
+                            {...tagProps}
+                            onClick={() => handleUpdateTags(tag.name, 'add')}
+                            onDelete={() => handleUpdateTags(tag.name, 'add')}
+                            deleteIcon={<Add />}
+                            label={label}
+                            variant='outlined'
                         />
-                    )
+                    );
                 })
             )}
         />

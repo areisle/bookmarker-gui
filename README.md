@@ -1,3 +1,5 @@
 # Bookmarker Chrome Extension (GUI)
 
 Chrome extension for adding bookmarks that can be shared with other users and have tags you can filter by instead of nested folders
+
+## building and packaging

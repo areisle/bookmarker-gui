@@ -1,1 +1,0 @@
-export { CategorySettings } from './CategorySettings';
