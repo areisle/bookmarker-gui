@@ -69,13 +69,12 @@ function AuthProvider(props: { children: ReactNode, isPopup: boolean }) {
     const { children, isPopup } = props;
 
     const [email, setEmail] = useStoredValue<string | null>('email', null);
+    console.log({ isPopup, email });
     const [inputValue, setInputValue] = useState('');
 
     const handleLogout = useCallback(() => {
         setEmail(null);
     }, []);
-
-    console.log({ email })
 
     const handleLogin = useCallback(() => {
         if (isPopup) {
@@ -122,6 +121,8 @@ function AuthProvider(props: { children: ReactNode, isPopup: boolean }) {
 
     return (
         <AuthContext.Provider value={value}>
+            <span>email: {email}</span>
+            <button onClick={() => global.browser?.runtime?.openOptionsPage()}>options page</button>
             {children}
         </AuthContext.Provider>
     )
@@ -153,6 +154,7 @@ const useAuth = () => {
 
 const useAuthenticatedFetcher = <TData, TVariables>(query: string): ((variables?: TVariables) => Promise<TData>) => {
     const auth = useAuth();
+    console.log('auth', auth)
 
     return async (variables?: TVariables) => {
         const res = await fetch(process.env.API_URL!, {

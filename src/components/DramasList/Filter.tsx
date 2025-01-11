@@ -556,6 +556,7 @@ function useStoredValue<T>(storageKey: string, initialValue: T) {
     );
 
     const handleSetValue = useCallback((next: T) => {
+        console.log('setting value', storageKey, next);
         setValue(next);
         storage.set(storageKey, JSON.stringify(next))
     }, [storageKey]);
