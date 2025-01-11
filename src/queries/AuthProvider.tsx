@@ -1,10 +1,9 @@
-import { Box, Button, CircularProgress, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, TextField, Typography } from "@mui/material";
 import React, { createContext, ReactNode, useCallback, useContext, useMemo, useState } from "react";
-import { QueryClient, QueryClientProvider, useMutation } from "@tanstack/react-query";
-import { requestLogin, requestLogout, useToken } from "./firebase";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { FetchCurrentUser, useFetchCurrentUser } from "./generated";
+import { useStoredValue } from "../components/DramasList/Filter";
 
-const USE_AUTH = process.env.NODE_ENV !== "development" || !process.env.NO_AUTH;
 
 class AuthenticationError extends Error { }
 
@@ -69,44 +68,30 @@ const AuthContext = createContext<AuthContextState | undefined>(undefined);
 function AuthProvider(props: { children: ReactNode, isPopup: boolean }) {
     const { children, isPopup } = props;
 
-    const token = useToken();
+    const [email, setEmail] = useStoredValue<string | null>('email', null);
+    const [inputValue, setInputValue] = useState('');
 
-    const {
-        mutate: login,
-        isLoading: isLoggingIn,
-        error: errorLoggingIn,
-    } = useMutation<unknown, Error>(
-        async () => requestLogin(),
-    );
+    const handleLogout = useCallback(() => {
+        setEmail(null);
+    }, []);
 
-    const { mutate: logout, isLoading: isLoggingOut, error: errorLoadingOut } = useMutation<unknown, Error>(
-        requestLogout,
-    );
+    console.log({ email })
 
     const handleLogin = useCallback(() => {
         if (isPopup) {
-            global.browser?.runtime.openOptionsPage()
-            return;
+            console.log({ isPopup, browser: global.browser })
+            global.browser?.runtime?.openOptionsPage();
+        } else {
+            setEmail(inputValue || null);
         }
-        if (!isLoggingOut || !isLoggingIn) {
-            login();
-        }
-    }, [login, isLoggingOut, isLoggingIn, isPopup])
-
-    const handleLogout = useCallback(() => {
-        if (!isLoggingOut || !isLoggingIn) {
-            logout();
-        }
-    }, [logout, isLoggingOut, isLoggingIn]);
+    }, [inputValue, isPopup]);
 
     const value = useMemo(() => ({
-        token,
+        token: email!,
         logout: handleLogout,
-    }), [handleLogout, token]);
+    }), [handleLogout, email]);
 
-    if (
-        (isLoggingIn || !token || errorLoggingIn) && USE_AUTH
-    ) {
+    if (!email) {
         return (
             <Box
                 sx={{
@@ -115,11 +100,18 @@ function AuthProvider(props: { children: ReactNode, isPopup: boolean }) {
                     alignItems: 'flex-start',
                 }}
             >
-                {errorLoggingIn && <Typography color='error' sx={{ marginTop: 1 }}>{errorLoggingIn.message}</Typography>}
+                {!isPopup && (
+                    <TextField
+                        name='email'
+                        type='email'
+                        label='your email'
+                        helperText='this is used to identify which user is making changes'
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
+                    />
+                )}
                 <Button
                     onClick={handleLogin}
-                    endIcon={isLoggingIn && <CircularProgress size={20} />}
-                    disabled={isLoggingIn || isLoggingOut}
                     sx={{ marginTop: 1 }}
                 >
                     Login

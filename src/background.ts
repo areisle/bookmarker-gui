@@ -1,17 +1,15 @@
-import { initializeApp } from "firebase/app";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-
-const app = initializeApp(JSON.parse(process.env.FIREBASE_CONFIG!));
-const auth = getAuth();
-
 const setIcon = async () => {
     const [tab] = await global.browser!.tabs.query({
         active: true,
         lastFocusedWindow: true,
     });
-    const token = await auth.currentUser?.getIdToken();
+
+    const { email } = await global.browser!.storage.local.get(["email"]);
+
+    console.log('email?', email);
+
     if (tab.url) {
-        const iconUrl = await getIconUrl(token, tab.url);
+        const iconUrl = await getIconUrl(email, tab.url);
         await global.browser!.browserAction.setIcon({
             path: iconUrl,
             tabId: tab.id,
@@ -61,14 +59,11 @@ const getIconUrl = async (
     return "icons/icon-warning-64.png";
 };
 
+
 global.browser!.tabs.onActivated.addListener((arg) => {
     setIcon();
 });
 
 global.browser!.tabs.onUpdated.addListener(async (tabId, _, tab) => {
-    setIcon();
-});
-
-onAuthStateChanged(auth, async (user) => {
     setIcon();
 });
